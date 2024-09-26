@@ -35,8 +35,8 @@ func (m *Map) Vec2Tile(x, y float32) int32 {
 	return X + Y*m.SizeX
 }
 
-func (m *Map) GetEntityTiles(v rl.Vector2, size int32) []int32 {
-	adjustedSize := float32(size - 1)
+func (m *Map) GetEntityTiles(v rl.Vector2) []int32 {
+	adjustedSize := float32(m.TileSize - 1)
 
 	nw := m.Vec2Tile(v.X, v.Y)
 	ne := m.Vec2Tile(v.X+adjustedSize, v.Y)
@@ -46,45 +46,51 @@ func (m *Map) GetEntityTiles(v rl.Vector2, size int32) []int32 {
 	return []int32{nw, ne, sw, se}
 }
 
-func (m *Map) CheckBounds(v rl.Vector2) bool {
-	return v.X < 0 || v.Y < 0 || v.X > float32(m.SizeX*m.TileSize) || v.Y > float32(m.SizeY*m.TileSize)
-}
+func (m *Map) CheckOutOfBounds(v rl.Vector2) bool {
+	tiles := m.GetEntityTiles(v)
 
-func (m *Map) CheckOutOfBounds(v rl.Vector2, size int32) bool {
-	tiles := m.GetEntityTiles(v, size)
+	if v.X < 0 || v.Y < 0 || v.X >= float32(m.SizeX*m.TileSize) || v.Y >= float32(m.SizeY*m.TileSize) {
+		return true
+	}
+
 	for _, tile := range tiles {
 		if tile < 0 || tile >= int32(m.TileCount) {
 			return true
 		}
 	}
+
 	return false
 }
 
-func (m *Map) CheckCollision(v rl.Vector2, size int32) bool {
-	tiles := m.GetEntityTiles(v, size)
-	if m.CheckOutOfBounds(v, size) {
+func (m *Map) CheckCollision(v rl.Vector2) bool {
+	if m.CheckOutOfBounds(v) {
 		return true
 	}
+
+	tiles := m.GetEntityTiles(v)
 	for _, tile := range tiles {
 		if m.Tiles[tile] == 1 {
 			return true
 		}
 	}
+
 	return false
 }
 
-func (m *Map) DrawTile(tile int, x, y float32, floor rl.Texture2D) {
-	rl.ClearBackground(rl.SkyBlue)
-	if tile == 0 {
-		rl.DrawTextureEx(floor, rl.NewVector2(x, y), 0, float32(m.TileSize)/float32(floor.Width), rl.White)
-	}
-}
-
-func (m *Map) Draw(g *Game) {
+func (m *Map) Draw(g *Game, normal bool) {
 	for i := 0; i < m.TileCount; i++ {
 		tile := m.Tiles[i]
 		x := float32((int32(i) % m.SizeX) * m.TileSize)
 		y := float32((int32(i) / m.SizeY) * m.TileSize)
-		m.DrawTile(tile, x, y, g.Textures.Floor)
+		src := rl.NewRectangle(0, 0, float32(g.Textures.Floor.Height), float32(g.Textures.Floor.Height))
+		dest := rl.NewRectangle(x, y, float32(m.TileSize), float32(m.TileSize))
+		origin := rl.NewVector2(0, 0)
+		if tile == 0 {
+			if normal {
+				rl.DrawTexturePro(g.Textures.Floor_Normal, src, dest, origin, 0, rl.White)
+			} else {
+				rl.DrawTexturePro(g.Textures.Floor, src, dest, origin, 0, rl.White)
+			}
+		}
 	}
 }

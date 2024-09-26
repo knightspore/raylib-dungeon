@@ -1,12 +1,10 @@
 package main
 
 import (
-	raylib "github.com/gen2brain/raylib-go/raylib"
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 type Game struct {
-	_debug       bool
 	Width        int32
 	Height       int32
 	BaseSize     int32
@@ -22,7 +20,7 @@ type Game struct {
 func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 	Map := NewMap(tiles, baseSize)
 	Player := NewPlayer(Map.Center(), baseSize)
-	Cam := NewCamera(raylib.NewVector2(float32(width/2), float32(height/2)), Player.Center())
+	Cam := NewCamera(rl.NewVector2(float32(width/2), float32(height/2)), Player.Center())
 	return &Game{
 		Width:        width,
 		Height:       height,
@@ -32,8 +30,8 @@ func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 		Map:          Map,
 		Cam:          Cam,
 		Player:       Player,
-		Textures:     NewTextures(),
-		Shaders:      NewShaders(),
+		Textures:     &Textures{},
+		Shaders:      &Shaders{},
 	}
 }
 
@@ -45,11 +43,11 @@ func (g *Game) Setup() {
 func (g *Game) Update() {
 	// Debug
 	if rl.IsKeyPressed(rl.KeyBackSlash) {
-		g._debug = !g._debug
+		DEBUG = !DEBUG
 	}
 
 	// Frame timer
-	g.FrameTimer += raylib.GetFrameTime()
+	g.FrameTimer += rl.GetFrameTime()
 	if g.FrameTimer >= 0.25 {
 		g.CurrentFrame = (g.CurrentFrame + 1) % 4
 		g.FrameTimer = 0
@@ -57,50 +55,83 @@ func (g *Game) Update() {
 
 	// Game Logic
 	g.Player.Update(g)
-	g.Cam.Zoom()
-	g.Cam.SmoothFollow(g.Player.Center())
-	g.Shaders.Update()
+	g.Cam.Update(g)
+}
+
+func (g *Game) RenderNormalPass() {
+	rl.BeginTextureMode(g.Textures.NormalPass)
+	rl.BeginMode2D(*g.Cam.Cam)
+	rl.ClearBackground(rl.NewColor(0, 0, 0, 255))
+
+	g.Map.Draw(g, true)
+	g.Player.Draw(g, true)
+
+	rl.EndMode2D()
+	rl.EndTextureMode()
+}
+
+func (g *Game) RenderDiffusePass() {
+	rl.BeginTextureMode(g.Textures.RenderPass)
+	rl.BeginMode2D(*g.Cam.Cam)
+	rl.ClearBackground(rl.NewColor(0, 0, 0, 255))
+
+	g.Map.Draw(g, false)
+	g.Player.Draw(g, false)
+
+	rl.EndMode2D()
+	rl.EndTextureMode()
 }
 
 func (g *Game) Draw() {
-	raylib.BeginDrawing()
-	raylib.ClearBackground(raylib.RayWhite)
+	// Clear the window
+	rl.ClearBackground(rl.Black)
 
-	// Draw map to render texture
-	raylib.BeginTextureMode(g.Textures.Map_RenderTexture)
-	raylib.BeginMode2D(*g.Cam.Cam)
+	// Draw to GBuffer
+	g.RenderDiffusePass()
+	g.RenderNormalPass()
 
-	g.Map.Draw(g)
-	g.Player.Draw(g)
+	// Start drawing to the screen
+	rl.BeginDrawing()
+	rl.BeginShaderMode(g.Shaders.Render)
 
-	raylib.EndMode2D()
-	raylib.EndTextureMode()
+	normLoc := rl.GetShaderLocation(g.Shaders.Render, "u_normal")
+	rl.SetShaderValueTexture(g.Shaders.Render, normLoc, g.Textures.NormalPass.Texture)
 
-	// Draw render texture to screen
-	raylib.BeginShaderMode(g.Shaders.Render)
-	raylib.DrawTextureRec(g.Textures.Map_RenderTexture.Texture, raylib.NewRectangle(0, 0, float32(g.Width), -float32(g.Height)), raylib.NewVector2(0, 0), raylib.RayWhite)
-	raylib.EndShaderMode()
+	resLoc := rl.GetShaderLocation(g.Shaders.Render, "u_resolution")
+	rl.SetShaderValue(g.Shaders.Render, resLoc, []float32{float32(g.Width), float32(g.Height)}, rl.ShaderUniformVec2)
 
-	// Draw over render texture
-	g.Player.DrawCursor(g)
+	lightLoc := rl.GetShaderLocation(g.Shaders.Render, "u_lightPos")
+	lightPos := rl.GetWorldToScreen2D(g.Player.CursorCenter(), *g.Cam.Cam)
+	pos := []float32{
+		lightPos.X - float32(float32(g.Player.Size)*g.Cam.Cam.Zoom)/2,
+		lightPos.Y - float32(float32(g.Player.Size)*g.Cam.Cam.Zoom)/2,
+	}
+	rl.SetShaderValue(g.Shaders.Render, lightLoc, pos, rl.ShaderUniformVec2)
 
-	raylib.DrawFPS(10, 10)
-	raylib.EndDrawing()
+	zoomLoc := rl.GetShaderLocation(g.Shaders.Render, "u_zoom")
+	rl.SetShaderValue(g.Shaders.Render, zoomLoc, []float32{g.Cam.Cam.Zoom}, rl.ShaderUniformFloat)
+
+	rl.DrawTextureRec(g.Textures.RenderPass.Texture, rl.NewRectangle(0, 0, float32(g.Width), -float32(g.Height)), rl.NewVector2(0, 0), rl.RayWhite)
+
+	rl.EndShaderMode()
+
+	rl.DrawFPS(10, 10)
+	rl.EndDrawing()
 }
 
 func (g *Game) Cleanup() {
 	g.Textures.Cleanup()
 	g.Shaders.Cleanup()
-	raylib.CloseWindow()
+	rl.CloseWindow()
 }
 
 func (g *Game) Run() {
-	raylib.SetConfigFlags(raylib.FlagVsyncHint | raylib.FlagMsaa4xHint)
-	raylib.InitWindow(WIDTH, HEIGHT, "karoo")
-	raylib.SetTargetFPS(60)
-	raylib.DisableCursor()
+	rl.SetConfigFlags(rl.FlagVsyncHint | rl.FlagMsaa4xHint)
+	rl.InitWindow(WIDTH, HEIGHT, "karoo")
+	rl.SetTargetFPS(90)
+	rl.DisableCursor()
 	g.Setup()
-	for !raylib.WindowShouldClose() {
+	for !rl.WindowShouldClose() {
 		g.Update()
 		g.Draw()
 	}
