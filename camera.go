@@ -21,7 +21,7 @@ func NewCamera(offset rl.Vector2, target rl.Vector2) *Camera {
 	}
 }
 
-func (c *Camera) Zoom() {
+func (c *Camera) UpdateZoom() {
 	if rl.IsKeyDown(rl.KeyRightBracket) {
 		if c.Cam.Zoom < 2.0 {
 			c.Cam.Zoom += c.ZoomSpeed
@@ -36,7 +36,13 @@ func (c *Camera) Zoom() {
 	}
 }
 
-func (c *Camera) SmoothFollow(target rl.Vector2) {
-	c.Cam.Target.X += (target.X - c.Cam.Target.X) * c.FollowSpeed
-	c.Cam.Target.Y += (target.Y - c.Cam.Target.Y) * c.FollowSpeed
+func (c *Camera) UpdateSmoothFollow(g *Game) {
+	target := rl.Vector2{X: g.Player.Center().X + g.Player.CursorCenter().X, Y: g.Player.Center().Y + g.Player.CursorCenter().Y}
+	c.Cam.Target.X += (target.X/2 - c.Cam.Target.X) * c.FollowSpeed
+	c.Cam.Target.Y += (target.Y/2 - c.Cam.Target.Y) * c.FollowSpeed
+}
+
+func (c *Camera) Update(g *Game) {
+	c.UpdateZoom()
+	c.UpdateSmoothFollow(g)
 }
