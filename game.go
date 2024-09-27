@@ -1,9 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"log"
-
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -18,7 +15,7 @@ type Game struct {
 	Player       *Player
 	Textures     *Textures
 	Shaders      *Shaders
-	Lights       []*PointLight
+	Lights       *Lights
 }
 
 func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
@@ -36,18 +33,14 @@ func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 		Player:       Player,
 		Textures:     &Textures{},
 		Shaders:      &Shaders{},
-		Lights: []*PointLight{
-			NewPointLight(0, 0, float32(Map.TileSize)*5, rl.NewColor(255, 0, 255, 0)),
-			NewPointLight(float32(Map.SizeX*Map.TileSize), float32(Map.SizeX*Map.TileSize), float32(Map.TileSize)*5, rl.NewColor(0, 0, 255, 0)),
-			NewPointLight(float32(Map.SizeX*Map.TileSize), 0, float32(Map.TileSize)*5, rl.NewColor(0, 255, 0, 0)),
-			NewPointLight(0, float32(Map.SizeX*Map.TileSize), float32(Map.TileSize)*5, rl.NewColor(255, 255, 0, 0)),
-		},
+		Lights:       &Lights{},
 	}
 }
 
 func (g *Game) Setup() {
 	g.Textures.Setup(g)
 	g.Shaders.Setup()
+	g.Lights.Setup(g)
 }
 
 func (g *Game) Update() {
@@ -66,12 +59,13 @@ func (g *Game) Update() {
 	// Game Logic
 	g.Player.Update(g)
 	g.Cam.Update(g)
+	g.Lights.Update()
 }
 
 func (g *Game) DrawNormalPass() {
 	rl.BeginTextureMode(g.Textures.NormalPass)
 	rl.BeginMode2D(*g.Cam.Cam)
-	rl.ClearBackground(rl.NewColor(0, 0, 0, 0))
+	rl.ClearBackground(rl.Blank)
 
 	g.Map.Draw(g, true)
 	g.Player.Draw(g, true)
@@ -83,7 +77,7 @@ func (g *Game) DrawNormalPass() {
 func (g *Game) DrawColourPass() {
 	rl.BeginTextureMode(g.Textures.ColorPass)
 	rl.BeginMode2D(*g.Cam.Cam)
-	rl.ClearBackground(rl.NewColor(0, 0, 0, 0))
+	rl.ClearBackground(rl.Blank)
 
 	g.Map.Draw(g, false)
 	g.Player.Draw(g, false)
@@ -93,34 +87,9 @@ func (g *Game) DrawColourPass() {
 }
 
 func (g *Game) DrawDeferredLightingPass() {
+	g.Lights.UpdateShader(g)
 	rl.BeginShaderMode(g.Shaders.Lighting)
-
-	normLoc := rl.GetShaderLocation(g.Shaders.Lighting, "u_normal")
-	rl.SetShaderValueTexture(g.Shaders.Lighting, normLoc, g.Textures.NormalPass.Texture)
-
-	resLoc := rl.GetShaderLocation(g.Shaders.Lighting, "u_resolution")
-	rl.SetShaderValue(g.Shaders.Lighting, resLoc, []float32{float32(g.Width), float32(g.Height)}, rl.ShaderUniformVec2)
-
-	zoomLoc := rl.GetShaderLocation(g.Shaders.Lighting, "u_zoom")
-	rl.SetShaderValue(g.Shaders.Lighting, zoomLoc, []float32{1.0 / g.Cam.Cam.Zoom}, rl.ShaderUniformFloat)
-
-	ambientLoc := rl.GetShaderLocation(g.Shaders.Lighting, "u_ambient")
-	rl.SetShaderValue(g.Shaders.Lighting, ambientLoc, []float32{0.1}, rl.ShaderUniformFloat)
-
-	for i, light := range g.Lights {
-		key := fmt.Sprintf("[%d]", i)
-		posLoc := rl.GetShaderLocation(g.Shaders.Lighting, "u_lightPos"+key)
-		colorLoc := rl.GetShaderLocation(g.Shaders.Lighting, "u_lightColor"+key)
-		if posLoc == -1 || colorLoc == -1 {
-			log.Fatalf("Failed to get shader location for %s", key)
-		}
-		pos := rl.GetWorldToScreen2D(rl.NewVector2(light.Pos.X, light.Pos.Y), *g.Cam.Cam)
-		rl.SetShaderValue(g.Shaders.Lighting, posLoc, []float32{pos.X, pos.Y}, rl.ShaderUniformVec2)
-		rl.SetShaderValue(g.Shaders.Lighting, colorLoc, []float32{float32(light.Color.R), float32(light.Color.G), float32(light.Color.B)}, rl.ShaderUniformVec3)
-	}
-
 	rl.DrawTextureRec(g.Textures.ColorPass.Texture, rl.NewRectangle(0, 0, float32(g.Width), -float32(g.Height)), rl.NewVector2(0, 0), rl.RayWhite)
-
 	rl.EndShaderMode()
 }
 
