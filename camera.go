@@ -23,13 +23,13 @@ func NewCamera(offset rl.Vector2, target rl.Vector2) *Camera {
 
 func (c *Camera) UpdateZoom() {
 	if rl.IsKeyDown(rl.KeyRightBracket) {
-		if c.Cam.Zoom < 2.0 {
+		if c.Cam.Zoom < 1.2 {
 			c.Cam.Zoom += c.ZoomSpeed
 			c.ZoomSpeed += 0.001
 		}
 	}
 	if rl.IsKeyDown(rl.KeyLeftBracket) {
-		if c.Cam.Zoom > 0.5 {
+		if c.Cam.Zoom > 0.8 {
 			c.Cam.Zoom -= c.ZoomSpeed
 			c.ZoomSpeed += 0.001
 		}
