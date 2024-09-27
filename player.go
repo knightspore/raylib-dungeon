@@ -34,8 +34,12 @@ func (p *Player) CursorCenter() rl.Vector2 {
 	return rl.NewVector2(p.Cursor.Dest.X+float32(p.Size/2), p.Cursor.Dest.Y+float32(p.Size/2))
 }
 
-func (p *Player) Draw(g *Game, normal bool) {
+func (p *Player) DrawCursor(g *Game, normal bool) {
+	rot := rl.GetTime() * 40
+	rl.DrawTexturePro(g.Textures.Cursor, p.Cursor.Source, p.Cursor.Dest, p.Cursor.Origin, float32(rot), rl.White)
+}
 
+func (p *Player) Draw(g *Game, normal bool) {
 	// For later use in animations
 	dest := rl.NewRectangle(p.Pos.X, p.Pos.Y, float32(p.Size), float32(p.Size))
 
@@ -50,14 +54,6 @@ func (p *Player) Draw(g *Game, normal bool) {
 		rl.DrawTexturePro(g.Textures.Player, p.Source, dest, rl.NewVector2(0, 0), 0, rl.White)
 	}
 	rl.EndShaderMode()
-
-	// Draw Cursor
-	rot := rl.GetTime() * 50
-	if normal {
-		rl.DrawTexturePro(g.Textures.Cursor_Normal, p.Cursor.Source, p.Cursor.Dest, p.Cursor.Origin, float32(rot), rl.White)
-	} else {
-		rl.DrawTexturePro(g.Textures.Cursor, p.Cursor.Source, p.Cursor.Dest, p.Cursor.Origin, float32(rot), rl.White)
-	}
 }
 
 func (p *Player) UpdateCursorPosition(g *Game) {

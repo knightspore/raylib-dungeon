@@ -29,6 +29,10 @@ func (m *Map) Center() rl.Vector2 {
 	return rl.NewVector2(float32(m.SizeX*m.TileSize)/2, float32(m.SizeY*m.TileSize)/2)
 }
 
+func (m *Map) Vec2TileV(v rl.Vector2) int32 {
+	return m.Vec2Tile(v.X, v.Y)
+}
+
 func (m *Map) Vec2Tile(x, y float32) int32 {
 	X := int32(x) / m.TileSize
 	Y := int32(y) / m.TileSize
@@ -78,6 +82,7 @@ func (m *Map) CheckCollision(v rl.Vector2) bool {
 }
 
 func (m *Map) Draw(g *Game, normal bool) {
+	rl.ClearBackground(rl.NewColor(40, 30, 44, 255))
 	for i := 0; i < m.TileCount; i++ {
 		tile := m.Tiles[i]
 		x := float32((int32(i) % m.SizeX) * m.TileSize)
@@ -90,6 +95,19 @@ func (m *Map) Draw(g *Game, normal bool) {
 				rl.DrawTexturePro(g.Textures.Floor_Normal, src, dest, origin, 0, rl.White)
 			} else {
 				rl.DrawTexturePro(g.Textures.Floor, src, dest, origin, 0, rl.White)
+			}
+
+			if DEBUG && m.Vec2Tile(g.Player.Cursor.Dest.X, g.Player.Cursor.Dest.Y) == int32(i) {
+				rl.DrawRectangleLinesEx(dest, 1, rl.NewColor(0, 255, 0, 255))
+			}
+
+		} else if tile == 1 {
+			northIdx := i - int(m.SizeX)
+			if northIdx >= 0 && m.Tiles[northIdx] == 0 {
+				src := rl.NewRectangle(float32(g.Textures.NoFloor.Height), 0, float32(g.Textures.NoFloor.Height), float32(g.Textures.NoFloor.Height))
+				rl.DrawTexturePro(g.Textures.NoFloor, src, dest, origin, 0, rl.White)
+			} else {
+				rl.DrawTexturePro(g.Textures.NoFloor, src, dest, origin, 0, rl.White)
 			}
 		}
 	}

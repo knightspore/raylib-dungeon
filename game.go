@@ -86,11 +86,13 @@ func (g *Game) DrawColourPass() {
 	rl.EndTextureMode()
 }
 
-func (g *Game) DrawDeferredLightingPass() {
+func (g *Game) DrawLightingPass() {
 	g.Lights.UpdateShader(g)
+	rl.BeginTextureMode(g.Textures.LightingPass)
 	rl.BeginShaderMode(g.Shaders.Lighting)
 	rl.DrawTextureRec(g.Textures.ColorPass.Texture, rl.NewRectangle(0, 0, float32(g.Width), -float32(g.Height)), rl.NewVector2(0, 0), rl.RayWhite)
 	rl.EndShaderMode()
+	rl.EndTextureMode()
 }
 
 func (g *Game) Draw() {
@@ -100,10 +102,20 @@ func (g *Game) Draw() {
 	// Draw to GBuffer
 	g.DrawColourPass()
 	g.DrawNormalPass()
+	g.DrawLightingPass()
+
+	// Draw to screen
+	rl.BeginDrawing()
 
 	// Render Lighting
-	rl.BeginDrawing()
-	g.DrawDeferredLightingPass()
+	rl.BeginShaderMode(g.Shaders.PostProcess)
+	rl.DrawTextureRec(g.Textures.LightingPass.Texture, rl.NewRectangle(0, 0, float32(g.Width), -float32(g.Height)), rl.NewVector2(0, 0), rl.RayWhite)
+	rl.EndShaderMode()
+
+	// UI
+	rl.BeginMode2D(*g.Cam.Cam)
+	g.Player.DrawCursor(g, false)
+	rl.EndMode2D()
 
 	rl.DrawFPS(10, 10)
 	rl.EndDrawing()

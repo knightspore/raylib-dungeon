@@ -29,7 +29,7 @@ void main() {
         float distance = length(lightDir2d) / u_zoom;
 
         float diffuseStrength = max(dot(normal.rgb, lightDir3), u_ambient);
-        float attenuation = 1.0 / (1.0 + 5.0 * distance * u_zoom + 4.0 * distance * distance * u_zoom * u_zoom);
+        float attenuation = 1.0 / (1.0 + 2.0 * distance * u_zoom + 4.0 * distance * distance * u_zoom * u_zoom);
         vec3 diffuse = diffuseStrength * attenuation * textureColor.rgb * lightColor;
         vec3 specular = pow(dot(textureColor.rgb, vec3(0.299, 0.587, 0.114)), 2.0) * attenuation * lightColor;
 
