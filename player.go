@@ -79,6 +79,14 @@ func (p *Player) UpdateCursorPosition(g *Game) {
 func (p *Player) UpdatePlayerPosition(g *Game) {
 	nextPos := p.Pos
 
+	if rl.IsKeyDown(rl.KeyLeftShift) && p.Speed == (float32(p.Size)/24) {
+		p.Speed = (float32(p.Size) / 12)
+	}
+
+	if rl.IsKeyUp(rl.KeyLeftShift) && p.Speed > (float32(p.Size)/24) {
+		p.Speed -= 0.1
+	}
+
 	if rl.IsKeyDown(rl.KeyW) {
 		nextUp := rl.NewVector2(nextPos.X, nextPos.Y-p.Speed)
 		if !g.Map.CheckCollision(nextUp) {
