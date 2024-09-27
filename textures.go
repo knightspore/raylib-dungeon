@@ -18,11 +18,11 @@ type Textures struct {
 	Player_Normal rl.Texture2D
 	Cursor        rl.Texture2D
 	Cursor_Normal rl.Texture2D
-	RenderPass    rl.RenderTexture2D
+	ColorPass     rl.RenderTexture2D
 	NormalPass    rl.RenderTexture2D
 }
 
-func (t *Textures) Setup() {
+func (t *Textures) Setup(g *Game) {
 	t.Floor = rl.LoadTexture(TEXTURE_FLOOR)
 	t.Floor_Normal = rl.LoadTexture(TEXTURE_FLOOR_NORMAL)
 
@@ -32,7 +32,7 @@ func (t *Textures) Setup() {
 	t.Cursor = rl.LoadTexture(TEXTURE_CURSOR)
 	t.Cursor_Normal = rl.LoadTexture(TEXTURE_CURSOR_NORMAL)
 
-	t.RenderPass = rl.LoadRenderTexture(int32(rl.GetScreenWidth()), int32(rl.GetScreenHeight()))
+	t.ColorPass = rl.LoadRenderTexture(int32(rl.GetScreenWidth()), int32(rl.GetScreenHeight()))
 
 	t.NormalPass = rl.LoadRenderTexture(int32(rl.GetScreenWidth()), int32(rl.GetScreenHeight()))
 }
@@ -47,7 +47,7 @@ func (t *Textures) Cleanup() {
 	rl.UnloadTexture(t.Cursor)
 	rl.UnloadTexture(t.Cursor_Normal)
 
-	rl.UnloadRenderTexture(t.RenderPass)
+	rl.UnloadRenderTexture(t.ColorPass)
 
 	rl.UnloadRenderTexture(t.NormalPass)
 }

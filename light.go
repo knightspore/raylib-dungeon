@@ -6,14 +6,10 @@ import (
 
 type PointLight struct {
 	Pos    rl.Vector2
-	Radius float32
 	Color  rl.Color
+	Radius float32
 }
 
 func NewPointLight(x, y, radius float32, color rl.Color) *PointLight {
-	return &PointLight{rl.NewVector2(x, y), radius, color}
-}
-
-func (pl *PointLight) Draw(g *Game) {
-	rl.DrawCircleV(pl.Pos, pl.Radius, pl.Color)
+	return &PointLight{rl.NewVector2(x, y), color, radius}
 }

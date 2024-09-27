@@ -30,10 +30,10 @@ void main() {
     float distance = length(lightDir2d);
 
     // Diffuse Lighting
-    float diffuseStrength = max(dot(normal.rgb, lightDir3), u_ambient);
+    float diffuseStrength = max(dot(normal.rgb, lightDir3), 0.0);
     float attenuation = 1.0 / (1.0 + 5.0 * distance + 4.0 * distance * distance);
     vec3 diffuse = diffuseStrength * attenuation * textureColor.rgb * lightColor;
     vec3 specular = specularColor * attenuation * lightColor;
 
-    finalColor = vec4(lighting + diffuse + specular, textureColor.a);
+    finalColor = vec4(lighting + diffuse + specular, textureColor.a * fragColor.a);
 }
