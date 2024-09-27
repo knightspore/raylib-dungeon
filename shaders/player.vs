@@ -21,7 +21,7 @@ void main() {
 
     float pulse = 0.05 * abs(sin(u_time * 3));
 
-    fragTexCoord = vec2(vertexTexCoord.x, vertexTexCoord.y + pulse);
+    fragTexCoord = vec2(vertexTexCoord.x, vertexTexCoord.y + pulse / 2);
     fragColor = vertexColor;
     fragNormal = vertexNormal;
     time = u_time;

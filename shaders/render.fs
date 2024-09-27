@@ -9,29 +9,32 @@ uniform sampler2D tex;
 uniform sampler2D u_normal;
 uniform vec2 u_resolution;
 uniform vec2 u_lightPos;
-uniform float u_zoom;
+uniform vec3 u_lightColor;
+
+float ambient = 0.15;
 
 void main() {
     // Setup
-
-    // Albedo, Normal, Specular, Position
+    vec3 lightColor = vec3(u_lightColor.r / 255.0, u_lightColor.g / 255.0, u_lightColor.b / 255.0);
     vec4 textureColor = texture(tex, fragTexCoord);
     vec4 normal = texture(u_normal, fragTexCoord);
-    float specular = pow(dot(textureColor.rgb, vec3(0.299, 0.587, 0.114)), 2.0);
-    vec2 position = (fragTexCoord * u_resolution); // screen space
+    float specularColor = pow(dot(textureColor.rgb, vec3(0.299, 0.587, 0.114)), 2.0);
 
-    // Lighting
+    // Ambient Light
+    vec3 lighting = textureColor.rgb * ambient;
 
-    // Create normalized position from uniform, flipping y as per OpenGL coordinate system
-    vec2 lightPos = vec2(u_lightPos.x / u_resolution.x, 1.0 - u_lightPos.y / u_resolution.y);
+    // Current Light Direction
+    vec2 pos = vec2(u_lightPos.x / u_resolution.x, 1.0 - u_lightPos.y / u_resolution.y);
+    vec2 lightDir2d = pos - fragTexCoord;
+    vec2 lightDirNorm = normalize(lightDir2d);
+    vec3 lightDir3 = normalize(vec3(lightDirNorm, 200.0));
+    float distance = length(lightDir2d);
 
-    // Debug
+    // Diffuse Lighting
+    float diffuseStrength = max(dot(normal.rgb, lightDir3), ambient);
+    float attenuation = 1.0 / (1.0 + 5.0 * distance + 4.0 * distance * distance);
+    vec3 diffuse = diffuseStrength * attenuation * textureColor.rgb * lightColor;
+    vec3 specular = specularColor * attenuation * lightColor;
 
-    // Draw red circle around light pos
-    bool withinRad = distance(fragTexCoord, lightPos) < 0.1 * u_zoom; // 0.1 is the radius
-    if (withinRad) {
-        textureColor.rg = fragTexCoord.xy;
-    }
-
-    finalColor = textureColor;
+    finalColor = vec4(lighting + diffuse + specular, textureColor.a);
 }
