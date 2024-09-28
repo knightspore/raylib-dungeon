@@ -40,7 +40,6 @@ func (p *Player) DrawCursor(g *Game, normal bool) {
 }
 
 func (p *Player) Draw(g *Game, normal bool) {
-	// For later use in animations
 	dest := rl.NewRectangle(p.Pos.X, p.Pos.Y, float32(p.Size), float32(p.Size))
 
 	// Draw Player

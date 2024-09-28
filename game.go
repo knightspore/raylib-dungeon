@@ -16,6 +16,7 @@ type Game struct {
 	Textures     *Textures
 	Shaders      *Shaders
 	Lights       *Lights
+	Cursor       *Cursor
 }
 
 func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
@@ -34,6 +35,7 @@ func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 		Textures:     &Textures{},
 		Shaders:      &Shaders{},
 		Lights:       &Lights{},
+		Cursor:       NewCursor(float32(baseSize)),
 	}
 }
 
@@ -41,6 +43,7 @@ func (g *Game) Setup() {
 	g.Textures.Setup(g)
 	g.Shaders.Setup()
 	g.Lights.Setup(g)
+	g.Cursor.Setup()
 
 	g.Lights.Add(100, 100, 100, rl.NewColor(255, 255, 255, 0))
 }
@@ -51,8 +54,8 @@ func (g *Game) Update() {
 		DEBUG = !DEBUG
 	}
 
-	g.Lights.Lights[4].Pos.X = g.Player.Cursor.Dest.X
-	g.Lights.Lights[4].Pos.Y = g.Player.Cursor.Dest.Y
+	g.Lights.Lights[0].Pos.X = g.Player.Cursor.Dest.X
+	g.Lights.Lights[0].Pos.Y = g.Player.Cursor.Dest.Y
 
 	// Frame timer
 	g.FrameTimer += rl.GetFrameTime()
@@ -64,7 +67,8 @@ func (g *Game) Update() {
 	// Game Logic
 	g.Player.Update(g)
 	g.Cam.Update(g)
-	g.Lights.Update()
+	// g.Lights.Update()
+	g.Cursor.Update()
 }
 
 func (g *Game) DrawNormalPass() {
@@ -120,7 +124,8 @@ func (g *Game) Draw() {
 
 	// UI
 	rl.BeginMode2D(*g.Cam.Cam)
-	g.Player.DrawCursor(g, false)
+	// g.Player.DrawCursor(g, false)
+	g.Cursor.Draw()
 	rl.EndMode2D()
 
 	rl.DrawFPS(10, 10)
@@ -130,6 +135,7 @@ func (g *Game) Draw() {
 func (g *Game) Cleanup() {
 	g.Textures.Cleanup()
 	g.Shaders.Cleanup()
+	g.Cursor.Cleanup()
 	rl.CloseWindow()
 }
 

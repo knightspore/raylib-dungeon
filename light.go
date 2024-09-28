@@ -26,10 +26,10 @@ func (l *Lights) Add(x, y, radius float32, color rl.Color) {
 }
 
 func (l *Lights) Setup(g *Game) {
-	l.Add(0, 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 0, 255, 255))
-	l.Add(float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(0, 0, 255, 255))
-	l.Add(float32(g.Map.SizeX*g.Map.TileSize), 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 255, 255))
-	l.Add(0, float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 0, 255))
+	// l.Add(0, 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 0, 255, 255))
+	// l.Add(float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(0, 0, 255, 255))
+	// l.Add(float32(g.Map.SizeX*g.Map.TileSize), 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 255, 255))
+	// l.Add(0, float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 0, 255))
 }
 
 func (l *Lights) UpdateShader(g *Game) {
