@@ -25,7 +25,7 @@ void main() {
         vec2 pos = vec2(u_lightPos[i].x / u_resolution.x, 1.0 - u_lightPos[i].y / u_resolution.y);
         vec2 lightDir2d = (pos - fragTexCoord) * u_zoom;
         vec2 lightDirNorm = normalize(lightDir2d);
-        vec3 lightDir3 = normalize(vec3(lightDirNorm, 200.0 * u_zoom));
+        vec3 lightDir3 = normalize(vec3(lightDirNorm, 0.2 * u_zoom));
         float distance = length(lightDir2d) / u_zoom;
 
         float diffuseStrength = max(dot(normal.rgb, lightDir3), u_ambient);

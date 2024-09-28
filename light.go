@@ -26,10 +26,10 @@ func (l *Lights) Add(x, y, radius float32, color rl.Color) {
 }
 
 func (l *Lights) Setup(g *Game) {
-	// l.Add(0, 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 0, 255, 255))
-	// l.Add(float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(0, 0, 255, 255))
-	// l.Add(float32(g.Map.SizeX*g.Map.TileSize), 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 255, 255))
-	// l.Add(0, float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 0, 255))
+	l.Add(0, 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 0, 255, 255))
+	l.Add(float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(0, 0, 255, 255))
+	l.Add(float32(g.Map.SizeX*g.Map.TileSize), 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 255, 255))
+	l.Add(0, float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 0, 255))
 }
 
 func (l *Lights) UpdateShader(g *Game) {
@@ -64,21 +64,7 @@ func (l *Lights) Draw(g *Game) {
 	}
 }
 
-var up = true
-
-func (l *Lights) Update() {
-	// Demo
-	for _, light := range l.Lights {
-		if up {
-			light.Color.R += 1
-		} else {
-			light.Color.R -= 1
-		}
-		if light.Color.R == 255 {
-			up = false
-		}
-		if light.Color.R == 0 {
-			up = true
-		}
-	}
+func (l *Lights) Update(cursorCenter rl.Vector2) {
+	l.Lights[4].Pos.X = cursorCenter.X
+	l.Lights[4].Pos.Y = cursorCenter.Y
 }

@@ -90,18 +90,18 @@ func (m *Map) Draw(g *Game, normal bool) {
 		src := rl.NewRectangle(0, 0, float32(g.Textures.Floor.Height), float32(g.Textures.Floor.Height))
 		dest := rl.NewRectangle(x, y, float32(m.TileSize), float32(m.TileSize))
 		origin := rl.NewVector2(0, 0)
-		if tile == 0 {
+		if tile == 0 { // Draw floor tile
 			if normal {
 				rl.DrawTexturePro(g.Textures.Floor_Normal, src, dest, origin, 0, rl.White)
 			} else {
 				rl.DrawTexturePro(g.Textures.Floor, src, dest, origin, 0, rl.White)
 			}
 
-			if DEBUG && m.Vec2Tile(g.Player.Cursor.Dest.X, g.Player.Cursor.Dest.Y) == int32(i) {
-				rl.DrawRectangleLinesEx(dest, 1, rl.NewColor(0, 255, 0, 255))
+			if DEBUG && m.Vec2Tile(g.Cursor.Center().X, g.Cursor.Center().Y) == int32(i) {
+				rl.DrawRectangleLinesEx(dest, 1, rl.Green) // Center
 			}
 
-		} else if tile == 1 {
+		} else if tile == 1 { // Draw empty tiles
 			northIdx := i - int(m.SizeX)
 			if northIdx >= 0 && m.Tiles[northIdx] == 0 {
 				src := rl.NewRectangle(float32(g.Textures.NoFloor.Height), 0, float32(g.Textures.NoFloor.Height), float32(g.Textures.NoFloor.Height))

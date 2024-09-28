@@ -9,8 +9,6 @@ const (
 	TEXTURE_NOTILE_NORMAL = "textures/notile_n.png"
 	TEXTURE_PLAYER        = "textures/player_tilesheet.png"
 	TEXTURE_PLAYER_NORMAL = "textures/player_tilesheet_n.png"
-	TEXTURE_CURSOR        = "textures/cursor_tilesheet.png"
-	TEXTURE_CURSOR_NORMAL = "textures/cursor_tilesheet_n.png"
 	TEXTURE_LIGHT         = "textures/light.png"
 )
 
@@ -21,8 +19,6 @@ type Textures struct {
 	NoFloor_Normal rl.Texture2D
 	Player         rl.Texture2D
 	Player_Normal  rl.Texture2D
-	Cursor         rl.Texture2D
-	Cursor_Normal  rl.Texture2D
 	Light          rl.Texture2D
 	ColorPass      rl.RenderTexture2D
 	NormalPass     rl.RenderTexture2D
@@ -38,9 +34,6 @@ func (t *Textures) Setup(g *Game) {
 
 	t.Player = rl.LoadTexture(TEXTURE_PLAYER)
 	t.Player_Normal = rl.LoadTexture(TEXTURE_PLAYER_NORMAL)
-
-	t.Cursor = rl.LoadTexture(TEXTURE_CURSOR)
-	t.Cursor_Normal = rl.LoadTexture(TEXTURE_CURSOR_NORMAL)
 
 	t.Light = rl.LoadTexture(TEXTURE_LIGHT)
 
@@ -58,9 +51,6 @@ func (t *Textures) Cleanup() {
 
 	rl.UnloadTexture(t.Player)
 	rl.UnloadTexture(t.Player_Normal)
-
-	rl.UnloadTexture(t.Cursor)
-	rl.UnloadTexture(t.Cursor_Normal)
 
 	rl.UnloadTexture(t.Light)
 

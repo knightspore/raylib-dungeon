@@ -71,7 +71,7 @@ func (c *Cursor) Draw() {
 	rl.DrawTexturePro(c.textures["color"], c.source, c.dest, c.origin, c.rotation, rl.White)
 
 	if DEBUG {
-		rl.DrawCircle(int32(c.center().X), int32(c.center().Y), 5, rl.Red)
+		rl.DrawCircle(int32(c.Center().X), int32(c.Center().Y), 5, rl.Red)
 	}
 }
 
@@ -79,6 +79,6 @@ func (c *Cursor) DrawNormal() {
 	rl.DrawTexturePro(c.textures["normal"], c.source, c.dest, c.origin, c.rotation, rl.White)
 }
 
-func (c *Cursor) center() rl.Vector2 {
+func (c *Cursor) Center() rl.Vector2 {
 	return rl.NewVector2(c.dest.X, c.dest.Y)
 }

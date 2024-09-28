@@ -1,7 +1,6 @@
 package main
 
 import (
-	raylib "github.com/gen2brain/raylib-go/raylib"
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -10,11 +9,6 @@ type Player struct {
 	Size   int32
 	Speed  float32
 	Source rl.Rectangle
-	Cursor struct {
-		Source rl.Rectangle
-		Dest   rl.Rectangle
-		Origin rl.Vector2
-	}
 }
 
 func NewPlayer(pos rl.Vector2, size int32) *Player {
@@ -28,15 +22,6 @@ func NewPlayer(pos rl.Vector2, size int32) *Player {
 
 func (p *Player) Center() rl.Vector2 {
 	return rl.NewVector2(p.Pos.X+float32(p.Size/2), p.Pos.Y+float32(p.Size/2))
-}
-
-func (p *Player) CursorCenter() rl.Vector2 {
-	return rl.NewVector2(p.Cursor.Dest.X+float32(p.Size/2), p.Cursor.Dest.Y+float32(p.Size/2))
-}
-
-func (p *Player) DrawCursor(g *Game, normal bool) {
-	rot := rl.GetTime() * 40
-	rl.DrawTexturePro(g.Textures.Cursor, p.Cursor.Source, p.Cursor.Dest, p.Cursor.Origin, float32(rot), rl.White)
 }
 
 func (p *Player) Draw(g *Game, normal bool) {
@@ -53,22 +38,6 @@ func (p *Player) Draw(g *Game, normal bool) {
 		rl.DrawTexturePro(g.Textures.Player, p.Source, dest, rl.NewVector2(0, 0), 0, rl.White)
 	}
 	rl.EndShaderMode()
-}
-
-func (p *Player) UpdateCursorPosition(g *Game) {
-	pos := rl.GetMousePosition()
-
-	p.Cursor.Source = rl.NewRectangle(
-		float32(g.CurrentFrame*int(g.Textures.Cursor.Height)),
-		0,
-		float32(g.Textures.Cursor.Height),
-		float32(g.Textures.Cursor.Height),
-	)
-
-	halfSize := float32(g.BaseSize / 2)
-
-	p.Cursor.Dest = rl.NewRectangle(pos.X-halfSize, pos.Y-halfSize, float32(g.BaseSize), float32(g.BaseSize))
-	p.Cursor.Origin = raylib.Vector2{X: halfSize, Y: halfSize}
 }
 
 func (p *Player) UpdatePlayerPosition(g *Game) {
@@ -128,5 +97,4 @@ func (p *Player) UpdatePlayerPosition(g *Game) {
 
 func (p *Player) Update(g *Game) {
 	p.UpdatePlayerPosition(g)
-	p.UpdateCursorPosition(g)
 }

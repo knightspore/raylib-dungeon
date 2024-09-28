@@ -45,7 +45,7 @@ func (g *Game) Setup() {
 	g.Lights.Setup(g)
 	g.Cursor.Setup()
 
-	g.Lights.Add(100, 100, 100, rl.NewColor(255, 255, 255, 0))
+	g.Lights.Add(100, 100, 100, rl.NewColor(255, 200, 255, 0))
 }
 
 func (g *Game) Update() {
@@ -53,9 +53,6 @@ func (g *Game) Update() {
 	if rl.IsKeyPressed(rl.KeyBackSlash) {
 		DEBUG = !DEBUG
 	}
-
-	g.Lights.Lights[0].Pos.X = g.Player.Cursor.Dest.X
-	g.Lights.Lights[0].Pos.Y = g.Player.Cursor.Dest.Y
 
 	// Frame timer
 	g.FrameTimer += rl.GetFrameTime()
@@ -67,7 +64,7 @@ func (g *Game) Update() {
 	// Game Logic
 	g.Player.Update(g)
 	g.Cam.Update(g)
-	// g.Lights.Update()
+	g.Lights.Update(g.Cursor.Center())
 	g.Cursor.Update()
 }
 
@@ -78,6 +75,7 @@ func (g *Game) DrawNormalPass() {
 
 	g.Map.Draw(g, true)
 	g.Player.Draw(g, true)
+	g.Cursor.DrawNormal()
 
 	rl.EndMode2D()
 	rl.EndTextureMode()
@@ -91,6 +89,7 @@ func (g *Game) DrawColourPass() {
 	g.Map.Draw(g, false)
 	g.Player.Draw(g, false)
 	g.Lights.Draw(g)
+	g.Cursor.Draw()
 
 	rl.EndMode2D()
 	rl.EndTextureMode()
@@ -114,19 +113,12 @@ func (g *Game) Draw() {
 	g.DrawNormalPass()
 	g.DrawLightingPass()
 
-	// Draw to screen
+	// Draw from GBuffer with post processing shader
 	rl.BeginDrawing()
 
-	// Render Lighting
 	rl.BeginShaderMode(g.Shaders.PostProcess)
 	rl.DrawTextureRec(g.Textures.LightingPass.Texture, rl.NewRectangle(0, 0, float32(g.Width), -float32(g.Height)), rl.NewVector2(0, 0), rl.RayWhite)
 	rl.EndShaderMode()
-
-	// UI
-	rl.BeginMode2D(*g.Cam.Cam)
-	// g.Player.DrawCursor(g, false)
-	g.Cursor.Draw()
-	rl.EndMode2D()
 
 	rl.DrawFPS(10, 10)
 	rl.EndDrawing()

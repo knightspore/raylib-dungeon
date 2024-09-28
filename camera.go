@@ -37,7 +37,7 @@ func (c *Camera) UpdateZoom() {
 }
 
 func (c *Camera) UpdateSmoothFollow(g *Game) {
-	target := rl.Vector2{X: g.Player.Center().X + g.Player.CursorCenter().X, Y: g.Player.Center().Y + g.Player.CursorCenter().Y}
+	target := rl.Vector2{X: g.Player.Center().X + g.Cursor.Center().X, Y: g.Player.Center().Y + g.Cursor.Center().Y}
 	c.Cam.Target.X += (target.X/2 - c.Cam.Target.X) * c.FollowSpeed
 	c.Cam.Target.Y += (target.Y/2 - c.Cam.Target.Y) * c.FollowSpeed
 }
