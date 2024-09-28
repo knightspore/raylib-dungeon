@@ -50,16 +50,8 @@ func (c *Cursor) updateAnimation() {
 }
 
 func (c *Cursor) updatePosition() {
-	halfSize := float32(c.dest.Height / 2)
-
-	dx, dy, dw, dh :=
-		float32(rl.GetMousePosition().X-halfSize),
-		float32(rl.GetMousePosition().Y-halfSize),
-		float32(c.dest.Width),
-		float32(c.dest.Height)
-
 	c.rotation = float32(rl.GetTime() * animation_fps * 10)
-	c.dest = rl.NewRectangle(dx, dy, dw, dh)
+	c.dest.X, c.dest.Y = float32(rl.GetMousePosition().X-c.dest.Height/2), float32(rl.GetMousePosition().Y-c.dest.Height/2)
 }
 
 func (c *Cursor) Update() {
