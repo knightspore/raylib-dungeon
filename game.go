@@ -42,7 +42,7 @@ func (g *Game) Setup() {
 	g.Shaders.Setup()
 	g.Lights.Setup(g)
 
-	g.Lights.Add(100, 100, 100, rl.NewColor(255, 255, 255, 255))
+	g.Lights.Add(100, 100, 100, rl.NewColor(255, 255, 255, 0))
 }
 
 func (g *Game) Update() {
@@ -86,6 +86,7 @@ func (g *Game) DrawColourPass() {
 
 	g.Map.Draw(g, false)
 	g.Player.Draw(g, false)
+	g.Lights.Draw(g)
 
 	rl.EndMode2D()
 	rl.EndTextureMode()
@@ -135,7 +136,7 @@ func (g *Game) Cleanup() {
 func (g *Game) Run() {
 	rl.SetConfigFlags(rl.FlagVsyncHint | rl.FlagMsaa4xHint)
 	rl.InitWindow(WIDTH, HEIGHT, "karoo")
-	rl.SetTargetFPS(90)
+	rl.SetTargetFPS(60)
 	rl.DisableCursor()
 	g.Setup()
 	for !rl.WindowShouldClose() {

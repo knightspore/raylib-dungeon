@@ -11,6 +11,7 @@ const (
 	TEXTURE_PLAYER_NORMAL = "textures/player_tilesheet_n.png"
 	TEXTURE_CURSOR        = "textures/cursor_tilesheet.png"
 	TEXTURE_CURSOR_NORMAL = "textures/cursor_tilesheet_n.png"
+	TEXTURE_LIGHT         = "textures/light.png"
 )
 
 type Textures struct {
@@ -22,6 +23,7 @@ type Textures struct {
 	Player_Normal  rl.Texture2D
 	Cursor         rl.Texture2D
 	Cursor_Normal  rl.Texture2D
+	Light          rl.Texture2D
 	ColorPass      rl.RenderTexture2D
 	NormalPass     rl.RenderTexture2D
 	LightingPass   rl.RenderTexture2D
@@ -40,6 +42,8 @@ func (t *Textures) Setup(g *Game) {
 	t.Cursor = rl.LoadTexture(TEXTURE_CURSOR)
 	t.Cursor_Normal = rl.LoadTexture(TEXTURE_CURSOR_NORMAL)
 
+	t.Light = rl.LoadTexture(TEXTURE_LIGHT)
+
 	t.ColorPass = rl.LoadRenderTexture(int32(rl.GetScreenWidth()), int32(rl.GetScreenHeight()))
 	t.NormalPass = rl.LoadRenderTexture(int32(rl.GetScreenWidth()), int32(rl.GetScreenHeight()))
 	t.LightingPass = rl.LoadRenderTexture(int32(rl.GetScreenWidth()), int32(rl.GetScreenHeight()))
@@ -57,6 +61,8 @@ func (t *Textures) Cleanup() {
 
 	rl.UnloadTexture(t.Cursor)
 	rl.UnloadTexture(t.Cursor_Normal)
+
+	rl.UnloadTexture(t.Light)
 
 	rl.UnloadRenderTexture(t.ColorPass)
 	rl.UnloadRenderTexture(t.NormalPass)

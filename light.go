@@ -26,10 +26,10 @@ func (l *Lights) Add(x, y, radius float32, color rl.Color) {
 }
 
 func (l *Lights) Setup(g *Game) {
-	l.Add(0, 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 0, 255, 0))
-	l.Add(float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(0, 0, 255, 0))
-	l.Add(float32(g.Map.SizeX*g.Map.TileSize), 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 255, 0))
-	l.Add(0, float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 0, 0))
+	l.Add(0, 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 0, 255, 255))
+	l.Add(float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(0, 0, 255, 255))
+	l.Add(float32(g.Map.SizeX*g.Map.TileSize), 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 255, 255))
+	l.Add(0, float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 0, 255))
 }
 
 func (l *Lights) UpdateShader(g *Game) {
@@ -55,6 +55,12 @@ func (l *Lights) UpdateShader(g *Game) {
 		pos := rl.GetWorldToScreen2D(rl.NewVector2(light.Pos.X, light.Pos.Y), *g.Cam.Cam)
 		rl.SetShaderValue(g.Shaders.Lighting, posLoc, []float32{pos.X, pos.Y}, rl.ShaderUniformVec2)
 		rl.SetShaderValue(g.Shaders.Lighting, colorLoc, []float32{float32(light.Color.R), float32(light.Color.G), float32(light.Color.B)}, rl.ShaderUniformVec3)
+	}
+}
+
+func (l *Lights) Draw(g *Game) {
+	for _, light := range l.Lights {
+		rl.DrawTexture(g.Textures.Light, int32(light.Pos.X-float32(g.Textures.Light.Width)/2), int32(light.Pos.Y-float32(g.Textures.Light.Height)/2), light.Color)
 	}
 }
 
