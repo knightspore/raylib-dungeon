@@ -5,9 +5,9 @@ in vec4 fragColor;
 out vec4 finalColor;
 uniform sampler2D tex;
 
-uniform int size = 2; // blur size
+uniform int size = 1; // blur size
 uniform float separation = 3.0; // spread
-uniform float threshold = 0.8;
+uniform float threshold = 0.9;
 uniform float amount = 1.0;
 
 uniform float chromaticAberration = 0.005;
@@ -27,7 +27,7 @@ void main() {
             
             // Sample each color channel with a slight offset
             vec4 colorR = texture(tex, fragTexCoord + offset + vec2(chromaticAberration, 0.0) * dist * 2.0);
-            vec4 colorG = texture(tex, fragTexCoord + offset);
+            vec4 colorG = texture(tex, fragTexCoord + offset + vec2(0.0, chromaticAberration) * dist * 2.0);
             vec4 colorB = texture(tex, fragTexCoord + offset - vec2(chromaticAberration, 0.0) * dist * 2.0);
             
             // Apply threshold

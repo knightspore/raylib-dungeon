@@ -41,6 +41,8 @@ func (g *Game) Setup() {
 	g.Textures.Setup(g)
 	g.Shaders.Setup()
 	g.Lights.Setup(g)
+
+	g.Lights.Add(100, 100, 100, rl.NewColor(255, 255, 255, 255))
 }
 
 func (g *Game) Update() {
@@ -48,6 +50,9 @@ func (g *Game) Update() {
 	if rl.IsKeyPressed(rl.KeyBackSlash) {
 		DEBUG = !DEBUG
 	}
+
+	g.Lights.Lights[4].Pos.X = g.Player.Cursor.Dest.X
+	g.Lights.Lights[4].Pos.Y = g.Player.Cursor.Dest.Y
 
 	// Frame timer
 	g.FrameTimer += rl.GetFrameTime()
