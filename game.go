@@ -42,9 +42,9 @@ func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 func (g *Game) Setup() {
 	g.Textures.Setup(g)
 	g.Shaders.Setup()
-	g.Lights.Setup(g)
+	g.Player.Setup()
 	g.Cursor.Setup()
-
+	g.Lights.Setup(g)
 	g.Lights.Add(100, 100, 100, rl.NewColor(255, 200, 255, 0))
 }
 
@@ -74,7 +74,7 @@ func (g *Game) DrawNormalPass() {
 	rl.ClearBackground(rl.Blank)
 
 	g.Map.Draw(g, true)
-	g.Player.Draw(g, true)
+	g.Player.Draw(g.Player.Sprite.Normal)
 	g.Cursor.DrawNormal()
 
 	rl.EndMode2D()
@@ -87,9 +87,13 @@ func (g *Game) DrawColourPass() {
 	rl.ClearBackground(rl.Blank)
 
 	g.Map.Draw(g, false)
-	g.Player.Draw(g, false)
+	g.Player.Draw(g.Player.Sprite.Color)
 	g.Lights.Draw(g)
 	g.Cursor.Draw()
+
+	if DEBUG {
+		rl.DrawLineV(g.Player.Center(), g.Cursor.Center(), rl.Red)
+	}
 
 	rl.EndMode2D()
 	rl.EndTextureMode()

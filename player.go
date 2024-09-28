@@ -5,51 +5,40 @@ import (
 )
 
 type Player struct {
-	Pos    rl.Vector2
-	Size   int32
-	Speed  float32
-	Source rl.Rectangle
+	Speed  float32 // can be moved to sprite
+	Sprite *Sprite
 }
 
 func NewPlayer(pos rl.Vector2, size int32) *Player {
 	return &Player{
-		Pos:    rl.Vector2{X: pos.X - float32(size)/2, Y: pos.Y - float32(size)/2},
-		Size:   size,
 		Speed:  float32(size / 24),
-		Source: rl.NewRectangle(0, 0, float32(size), float32(size)),
+		Sprite: NewSprite(float32(size), pos.X-float32(size)/2, pos.Y-float32(size)/2),
 	}
 }
 
-func (p *Player) Center() rl.Vector2 {
-	return rl.NewVector2(p.Pos.X+float32(p.Size/2), p.Pos.Y+float32(p.Size/2))
+func (p *Player) Setup() {
+	p.Sprite.Setup(
+		"textures/player_tilesheet.png",
+		"textures/player_tilesheet_n.png",
+		4,
+		map[string]rl.Shader{"player": rl.LoadShader("shaders/player.vs", "shaders/player.fs")},
+	)
 }
 
-func (p *Player) Draw(g *Game, normal bool) {
-	dest := rl.NewRectangle(p.Pos.X, p.Pos.Y, float32(p.Size), float32(p.Size))
+func (p *Player) Cleanup() {
+	p.Sprite.Cleanup()
+}
 
-	// Draw Player
-	rl.BeginShaderMode(g.Shaders.Player)
-	playerTimeLoc := rl.GetShaderLocation(g.Shaders.Player, "u_time")
-	time := float32(rl.GetTime())
-	rl.SetShaderValue(g.Shaders.Player, playerTimeLoc, []float32{time}, rl.ShaderUniformFloat)
-	if normal {
-		rl.DrawTexturePro(g.Textures.Player_Normal, p.Source, dest, rl.NewVector2(0, 0), 0, rl.White)
-	} else {
-		rl.DrawTexturePro(g.Textures.Player, p.Source, dest, rl.NewVector2(0, 0), 0, rl.White)
-	}
+func (p *Player) Draw(tex rl.Texture2D) {
+	rl.BeginShaderMode(p.Sprite.Shaders["player"])
+	p.Sprite.UpdateShaderValue("player", "u_time", []float32{float32(rl.GetTime())}, rl.ShaderUniformFloat)
+	p.Sprite.Draw(tex)
 	rl.EndShaderMode()
 }
 
-func (p *Player) UpdatePlayerPosition(g *Game) {
-	nextPos := p.Pos
-
-	if rl.IsKeyDown(rl.KeyLeftShift) && p.Speed == (float32(p.Size)/24) {
-		p.Speed = (float32(p.Size) / 12)
-	}
-
-	if rl.IsKeyUp(rl.KeyLeftShift) && p.Speed > (float32(p.Size)/24) {
-		p.Speed -= 0.1
-	}
+func (p *Player) HandleMovement(nextPos rl.Vector2, g *Game) (bool, rl.Vector2) {
+	// This can be optimized the most
+	// ie. split into sprite and player
 
 	if rl.IsKeyDown(rl.KeyW) {
 		nextUp := rl.NewVector2(nextPos.X, nextPos.Y-p.Speed)
@@ -80,21 +69,23 @@ func (p *Player) UpdatePlayerPosition(g *Game) {
 	}
 
 	if g.Map.CheckOutOfBounds(nextPos) {
-		return
+		return true, nextPos
 	}
 
-	p.Pos = nextPos
+	return false, nextPos
+}
 
-	// Animation
-
-	p.Source = rl.NewRectangle(
-		float32(g.CurrentFrame*int(p.Size)),
-		0,
-		float32(g.Textures.Player.Height),
-		float32(g.Textures.Player.Height),
-	)
+func (p *Player) updatePosition(g *Game) {
+	if outOfBounds, nextPos := p.HandleMovement(p.Sprite.Pos(), g); !outOfBounds {
+		p.Sprite.SetDest(nextPos)
+	}
 }
 
 func (p *Player) Update(g *Game) {
-	p.UpdatePlayerPosition(g)
+	p.Sprite.Update()
+	p.updatePosition(g)
+}
+
+func (p *Player) Center() rl.Vector2 {
+	return p.Sprite.Center()
 }
