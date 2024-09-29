@@ -51,12 +51,7 @@ func (g *Game) Cleanup() {
 }
 
 func (g *Game) Update() {
-	// Debug
-	if rl.IsKeyPressed(rl.KeyBackSlash) {
-		DEBUG = !DEBUG
-	}
-
-	// Game Logic
+	UpdateDebug()
 	g.Player.Update(g)
 	g.Cursor.Update()
 	g.Lights.Update(g.Cursor.Center())
@@ -87,7 +82,7 @@ func (g *Game) DrawColourPass() {
 	g.Cursor.Draw(g.Cursor.Sprite.Color)
 
 	if DEBUG {
-		DrawDebugLine(g.Player.Center(), g.Cursor.Center(), rl.Red)
+		DrawDebugLine(g.Player.Center(), g.Cursor.Center())
 	}
 
 	rl.EndMode2D()

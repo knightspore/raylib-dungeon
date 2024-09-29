@@ -70,7 +70,7 @@ func (s *Sprite) Update() {
 func (s *Sprite) Draw(tex rl.Texture2D) {
 	rl.DrawTexturePro(tex, s.src, s.dest, s.origin, s.rot, rl.White)
 	if DEBUG {
-		DrawDebugSprite(s, rl.Red)
+		DrawDebugSprite(s)
 	}
 }
 

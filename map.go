@@ -106,7 +106,8 @@ func (m *Map) Draw(g *Game, normal bool) {
 			}
 
 			if DEBUG && m.Vec2Tile(g.Cursor.Center().X, g.Cursor.Center().Y) == int32(i) {
-				DrawDebugSprite(m.Tile2Sprite(int32(i)), rl.Red)
+				DrawDebugSprite(m.Tile2Sprite(int32(i)))
+				DrawDebugLine(g.Cursor.Center(), m.Tile2Sprite(int32(i)).Center())
 			}
 
 		} else if tile == 1 { // Draw empty tiles
