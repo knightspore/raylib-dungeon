@@ -43,7 +43,7 @@ func (m *Map) Tile2Sprite(tile int32) *Sprite {
 	x := (tile % m.SizeX) * m.TileSize
 	y := (tile / m.SizeY) * m.TileSize
 	sprite := NewSprite(float32(m.TileSize), float32(x), float32(y))
-	sprite.Setup("textures/tilesheet.png", "textures/tilesheet_n.png", 4, nil)
+	sprite.Setup("", "", 1, nil)
 	return sprite
 }
 

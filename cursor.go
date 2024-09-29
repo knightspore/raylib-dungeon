@@ -6,9 +6,9 @@ type Cursor struct {
 	Sprite *Sprite
 }
 
-func NewCursor(baseSize float32) *Cursor {
+func NewCursor(baseSize, x, y float32) *Cursor {
 	return &Cursor{
-		Sprite: NewSprite(baseSize, 200, 200),
+		Sprite: NewSprite(baseSize, x, y),
 	}
 }
 

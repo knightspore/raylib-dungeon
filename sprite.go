@@ -33,12 +33,28 @@ func NewSprite(baseSize float32, x float32, y float32) *Sprite {
 
 func (s *Sprite) Setup(colorTex string, normalTex string, fps int32, shaders map[string]rl.Shader) {
 	s.fps = fps
-	s.Color = rl.LoadTexture(colorTex)
-	s.Normal = rl.LoadTexture(normalTex)
+	if colorTex != "" {
+		s.Color = rl.LoadTexture(colorTex)
+	}
+	if normalTex != "" {
+		s.Normal = rl.LoadTexture(normalTex)
+	}
 	s.src.Width = float32(s.Color.Width / s.fps)
 	s.src.Height = float32(s.Color.Height)
 	if shaders != nil {
 		s.Shaders = shaders
+	}
+}
+
+func (s *Sprite) Cleanup() {
+	if s.Color.ID > 0 {
+		rl.UnloadTexture(s.Color)
+	}
+	if s.Normal.ID > 0 {
+		rl.UnloadTexture(s.Normal)
+	}
+	for _, shader := range s.Shaders {
+		rl.UnloadShader(shader)
 	}
 }
 
@@ -56,11 +72,6 @@ func (s *Sprite) Draw(tex rl.Texture2D) {
 	if DEBUG {
 		DrawDebugSprite(s, rl.Red)
 	}
-}
-
-func (s *Sprite) Cleanup() {
-	rl.UnloadTexture(s.Color)
-	rl.UnloadTexture(s.Normal)
 }
 
 func (s *Sprite) Pos() rl.Vector2 {

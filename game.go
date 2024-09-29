@@ -5,37 +5,31 @@ import (
 )
 
 type Game struct {
-	Width        int32
-	Height       int32
-	BaseSize     int32
-	FrameTimer   float32
-	CurrentFrame int
-	Map          *Map
-	Cam          *Camera
-	Player       *Player
-	Textures     *Textures
-	Shaders      *Shaders
-	Lights       *Lights
-	Cursor       *Cursor
+	Width    int32
+	Height   int32
+	BaseSize int32
+	Map      *Map
+	Cam      *Camera
+	Player   *Player
+	Textures *Textures
+	Shaders  *Shaders
+	Lights   *Lights
+	Cursor   *Cursor
 }
 
 func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 	Map := NewMap(tiles, baseSize)
-	Player := NewPlayer(Map.Center(), baseSize)
-	Cam := NewCamera(rl.NewVector2(float32(width/2), float32(height/2)), Player.Center())
 	return &Game{
-		Width:        width,
-		Height:       height,
-		BaseSize:     baseSize,
-		FrameTimer:   0,
-		CurrentFrame: 0,
-		Map:          Map,
-		Cam:          Cam,
-		Player:       Player,
-		Textures:     &Textures{},
-		Shaders:      &Shaders{},
-		Lights:       &Lights{},
-		Cursor:       NewCursor(float32(baseSize)),
+		Width:    width,
+		Height:   height,
+		BaseSize: baseSize,
+		Map:      Map,
+		Cam:      NewCamera(rl.NewVector2(float32(width/2), float32(height/2)), rl.NewVector2(float32(width/2), float32(height/2))),
+		Player:   NewPlayer(Map.Center(), baseSize),
+		Textures: &Textures{},
+		Shaders:  &Shaders{},
+		Lights:   &Lights{},
+		Cursor:   NewCursor(float32(baseSize), float32(width/2), float32(height/2)),
 	}
 }
 
@@ -48,17 +42,18 @@ func (g *Game) Setup() {
 	g.Lights.Add(100, 100, 100, rl.NewColor(255, 200, 255, 0))
 }
 
+func (g *Game) Cleanup() {
+	g.Textures.Cleanup()
+	g.Shaders.Cleanup()
+	g.Player.Cleanup()
+	g.Cursor.Cleanup()
+	rl.CloseWindow()
+}
+
 func (g *Game) Update() {
 	// Debug
 	if rl.IsKeyPressed(rl.KeyBackSlash) {
 		DEBUG = !DEBUG
-	}
-
-	// Frame timer
-	g.FrameTimer += rl.GetFrameTime()
-	if g.FrameTimer >= 0.25 {
-		g.CurrentFrame = (g.CurrentFrame + 1) % 4
-		g.FrameTimer = 0
 	}
 
 	// Game Logic
@@ -126,13 +121,6 @@ func (g *Game) Draw() {
 
 	rl.DrawFPS(10, 10)
 	rl.EndDrawing()
-}
-
-func (g *Game) Cleanup() {
-	g.Textures.Cleanup()
-	g.Shaders.Cleanup()
-	g.Cursor.Cleanup()
-	rl.CloseWindow()
 }
 
 func (g *Game) Run() {
