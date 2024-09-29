@@ -7,7 +7,7 @@ const (
 )
 
 var (
-	DEBUG = false
+	DEBUG = true
 )
 
 var exampleMap = []int{ // 16x16
