@@ -1,0 +1,22 @@
+package main
+
+import rl "github.com/gen2brain/raylib-go/raylib"
+
+func DrawDebugArea(dest rl.Rectangle, center rl.Vector2, color rl.Color) {
+	color = rl.Fade(color, 0.75)
+	rl.DrawCircle(int32(center.X), int32(center.Y), 2, color)
+	rl.DrawRectangleLinesEx(dest, 2, color)
+	rl.DrawLineEx(rl.NewVector2(dest.X, dest.Y), rl.NewVector2(dest.X+dest.Width, dest.Y+dest.Height), 2, color)
+}
+
+func DrawDebugSprite(sprite *Sprite, color rl.Color) {
+	color = rl.Fade(color, 0.75)
+	rl.DrawCircle(int32(sprite.Center().X), int32(sprite.Center().Y), 2, color)
+	dest := rl.Rectangle{X: sprite.dest.X - sprite.origin.X, Y: sprite.dest.Y - sprite.origin.Y, Width: sprite.dest.Width, Height: sprite.dest.Height}
+	rl.DrawRectangleLinesEx(dest, 2, color)
+	rl.DrawLineEx(rl.NewVector2(dest.X, dest.Y), rl.NewVector2(dest.X+dest.Width, dest.Y+dest.Height), 2, color)
+}
+
+func DrawDebugLine(start rl.Vector2, end rl.Vector2, color rl.Color) {
+	rl.DrawLineEx(start, end, 2, color)
+}
