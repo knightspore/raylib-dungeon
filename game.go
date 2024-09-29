@@ -63,9 +63,9 @@ func (g *Game) Update() {
 
 	// Game Logic
 	g.Player.Update(g)
-	g.Cam.Update(g)
-	g.Lights.Update(g.Cursor.Center())
 	g.Cursor.Update()
+	g.Lights.Update(g.Cursor.Center())
+	g.Cam.Update(g)
 }
 
 func (g *Game) DrawNormalPass() {
@@ -75,7 +75,7 @@ func (g *Game) DrawNormalPass() {
 
 	g.Map.Draw(g, true)
 	g.Player.Draw(g.Player.Sprite.Normal)
-	g.Cursor.DrawNormal()
+	g.Cursor.Draw(g.Cursor.Sprite.Normal)
 
 	rl.EndMode2D()
 	rl.EndTextureMode()
@@ -87,12 +87,12 @@ func (g *Game) DrawColourPass() {
 	rl.ClearBackground(rl.Blank)
 
 	g.Map.Draw(g, false)
-	g.Player.Draw(g.Player.Sprite.Color)
 	g.Lights.Draw(g)
-	g.Cursor.Draw()
+	g.Player.Draw(g.Player.Sprite.Color)
+	g.Cursor.Draw(g.Cursor.Sprite.Color)
 
 	if DEBUG {
-		rl.DrawLineV(g.Player.Center(), g.Cursor.Center(), rl.Red)
+		DrawDebugLine(g.Player.Center(), g.Cursor.Center(), rl.Red)
 	}
 
 	rl.EndMode2D()

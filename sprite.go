@@ -37,7 +37,9 @@ func (s *Sprite) Setup(colorTex string, normalTex string, fps int32, shaders map
 	s.Normal = rl.LoadTexture(normalTex)
 	s.src.Width = float32(s.Color.Width / s.fps)
 	s.src.Height = float32(s.Color.Height)
-	s.Shaders = shaders
+	if shaders != nil {
+		s.Shaders = shaders
+	}
 }
 
 func (s *Sprite) Update() {
@@ -52,8 +54,7 @@ func (s *Sprite) Update() {
 func (s *Sprite) Draw(tex rl.Texture2D) {
 	rl.DrawTexturePro(tex, s.src, s.dest, s.origin, s.rot, rl.White)
 	if DEBUG {
-		rl.DrawCircle(int32(s.Center().X), int32(s.Center().Y), 3, rl.Red)
-		rl.DrawRectangleLinesEx(s.dest, 1, rl.Red)
+		DrawDebugSprite(s, rl.Red)
 	}
 }
 
@@ -78,6 +79,10 @@ func (s *Sprite) UpdateShaderValue(name string, value string, data []float32, un
 func (s *Sprite) SetDest(dest rl.Vector2) {
 	s.dest.X = dest.X
 	s.dest.Y = dest.Y
+}
+
+func (s *Sprite) SetOrigin(origin rl.Vector2) {
+	s.origin = origin
 }
 
 func (s *Sprite) SetRot(rot float32) {
