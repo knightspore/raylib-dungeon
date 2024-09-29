@@ -39,6 +39,14 @@ func (m *Map) Vec2Tile(x, y float32) int32 {
 	return X + Y*m.SizeX
 }
 
+func (m *Map) Tile2Sprite(tile int32) *Sprite {
+	x := (tile % m.SizeX) * m.TileSize
+	y := (tile / m.SizeY) * m.TileSize
+	sprite := NewSprite(float32(m.TileSize), float32(x), float32(y))
+	sprite.Setup("textures/tilesheet.png", "textures/tilesheet_n.png", 4, nil)
+	return sprite
+}
+
 func (m *Map) GetEntityTiles(v rl.Vector2) []int32 {
 	adjustedSize := float32(m.TileSize - 1)
 
@@ -98,7 +106,7 @@ func (m *Map) Draw(g *Game, normal bool) {
 			}
 
 			if DEBUG && m.Vec2Tile(g.Cursor.Center().X, g.Cursor.Center().Y) == int32(i) {
-				rl.DrawRectangleLinesEx(dest, 1, rl.Green) // Center
+				DrawDebugSprite(m.Tile2Sprite(int32(i)), rl.Red)
 			}
 
 		} else if tile == 1 { // Draw empty tiles
