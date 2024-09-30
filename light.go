@@ -26,10 +26,14 @@ func (l *Lights) Add(x, y, radius float32, color rl.Color) {
 }
 
 func (l *Lights) Setup(g *Game) {
-	l.Add(0, 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 0, 255, 255))
-	l.Add(float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(0, 0, 255, 255))
-	l.Add(float32(g.Map.SizeX*g.Map.TileSize), 0, float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 255, 255))
-	l.Add(0, float32(g.Map.SizeX*g.Map.TileSize), float32(g.Map.TileSize)*5, rl.NewColor(255, 255, 0, 255))
+	offset := float32(g.Map.tileSize) * 2.5
+	fullWidth := float32(g.Map.sizeX * g.Map.tileSize)
+	rad := float32(50)
+
+	l.Add(offset, offset, rad, rl.NewColor(255, 0, 255, 255))
+	l.Add(fullWidth-offset, fullWidth-offset, rad, rl.NewColor(0, 0, 255, 255))
+	l.Add(fullWidth-offset, offset, rad, rl.NewColor(255, 255, 255, 255))
+	l.Add(offset, fullWidth-offset, rad, rl.NewColor(255, 255, 0, 255))
 }
 
 func (l *Lights) UpdateShader(g *Game) {
