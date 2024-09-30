@@ -2,7 +2,7 @@ package main
 
 import rl "github.com/gen2brain/raylib-go/raylib"
 
-var DEBUG = false
+var DEBUG = true
 
 func DrawDebugArea(dest rl.Rectangle, center rl.Vector2, color rl.Color) {
 	color = rl.Fade(color, 0.75)
@@ -25,5 +25,11 @@ func DrawDebugLine(start rl.Vector2, end rl.Vector2) {
 func UpdateDebug() {
 	if rl.IsKeyPressed(rl.KeyF1) {
 		DEBUG = !DEBUG
+	}
+	if rl.IsKeyPressed(rl.KeyF2) {
+		rl.TakeScreenshot("screenshot.png")
+	}
+	if rl.IsKeyPressed(rl.KeyF3) {
+		rl.ToggleFullscreen()
 	}
 }
