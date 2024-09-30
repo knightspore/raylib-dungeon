@@ -58,7 +58,7 @@ func (s *Sprite) Cleanup() {
 	}
 }
 
-func (s *Sprite) Update() {
+func (s *Sprite) Animate() {
 	s.timer += rl.GetFrameTime()
 	if s.timer >= (1.0 / float32(4)) {
 		s.frame = (s.frame + 1) % 4

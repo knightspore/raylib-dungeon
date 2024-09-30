@@ -27,7 +27,7 @@ func (c *Cursor) Cleanup() {
 }
 
 func (c *Cursor) Update() {
-	c.Sprite.Update()
+	c.Sprite.Animate()
 	c.Sprite.SetDest(rl.Vector2{X: float32(rl.GetMousePosition().X - c.Sprite.dest.Width/2), Y: float32(rl.GetMousePosition().Y - c.Sprite.dest.Height/2)})
 	c.Sprite.SetRot(float32(rl.GetTime() * 40))
 }

@@ -82,7 +82,7 @@ func (p *Player) updatePosition(g *Game) {
 }
 
 func (p *Player) Update(g *Game) {
-	p.Sprite.Update()
+	p.Sprite.Animate()
 	p.updatePosition(g)
 }
 
