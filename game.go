@@ -25,7 +25,7 @@ func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 		BaseSize: baseSize,
 		Map:      Map,
 		Cam:      NewCamera(rl.NewVector2(float32(width/2), float32(height/2)), rl.NewVector2(float32(width/2), float32(height/2))),
-		Player:   NewPlayer(Map.Center(), baseSize),
+		Player:   NewPlayer(rl.NewVector2(float32(width/2), float32(height/2)), baseSize),
 		Textures: &Textures{},
 		Shaders:  &Shaders{},
 		Lights:   &Lights{},
@@ -36,17 +36,19 @@ func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 func (g *Game) Setup() {
 	g.Textures.Setup(g)
 	g.Shaders.Setup()
+	g.Map.Setup()
 	g.Player.Setup()
 	g.Cursor.Setup()
 	g.Lights.Setup(g)
-	g.Lights.Add(100, 100, 100, rl.NewColor(255, 200, 255, 0))
 }
 
 func (g *Game) Cleanup() {
 	g.Textures.Cleanup()
 	g.Shaders.Cleanup()
+	g.Map.Cleanup()
 	g.Player.Cleanup()
 	g.Cursor.Cleanup()
+	g.Lights.Cleanup()
 	rl.CloseWindow()
 }
 
@@ -63,7 +65,7 @@ func (g *Game) DrawNormalPass() {
 	rl.BeginMode2D(*g.Cam.Cam)
 	rl.ClearBackground(rl.Blank)
 
-	g.Map.Draw(g, true)
+	g.Map.DrawNormal()
 	g.Player.Draw(g.Player.Sprite.Normal)
 	g.Cursor.Draw(g.Cursor.Sprite.Normal)
 
@@ -76,13 +78,16 @@ func (g *Game) DrawColourPass() {
 	rl.BeginMode2D(*g.Cam.Cam)
 	rl.ClearBackground(rl.Blank)
 
-	g.Map.Draw(g, false)
-	g.Lights.Draw(g)
+	g.Map.Draw()
 	g.Player.Draw(g.Player.Sprite.Color)
+	g.Lights.Draw(g)
 	g.Cursor.Draw(g.Cursor.Sprite.Color)
 
 	if DEBUG {
 		DrawDebugLine(g.Player.Center(), g.Cursor.Center())
+		tile := g.Map.vec2Tile(g.Cursor.Center().X, g.Cursor.Center().Y)
+		DrawDebugArea(g.Map.tiles[tile].sprite.dest, g.Map.tiles[tile].Center(), rl.Green)
+		DrawDebugLine(g.Cursor.Center(), g.Map.tiles[tile].Center())
 	}
 
 	rl.EndMode2D()

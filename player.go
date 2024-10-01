@@ -42,33 +42,33 @@ func (p *Player) HandleMovement(nextPos rl.Vector2, g *Game) (bool, rl.Vector2) 
 
 	if rl.IsKeyDown(rl.KeyW) {
 		nextUp := rl.NewVector2(nextPos.X, nextPos.Y-p.Speed)
-		if !g.Map.CheckCollision(nextUp) {
+		if !g.Map.checkCollision(nextUp) {
 			nextPos = nextUp
 		}
 	}
 
 	if rl.IsKeyDown(rl.KeyS) {
 		nextDown := rl.NewVector2(nextPos.X, nextPos.Y+p.Speed)
-		if !g.Map.CheckCollision(nextDown) {
+		if !g.Map.checkCollision(nextDown) {
 			nextPos = nextDown
 		}
 	}
 
 	if rl.IsKeyDown(rl.KeyA) {
 		nextLeft := rl.NewVector2(nextPos.X-p.Speed, nextPos.Y)
-		if !g.Map.CheckCollision(nextLeft) {
+		if !g.Map.checkCollision(nextLeft) {
 			nextPos = nextLeft
 		}
 	}
 
 	if rl.IsKeyDown(rl.KeyD) {
 		nextRight := rl.NewVector2(nextPos.X+p.Speed, nextPos.Y)
-		if !g.Map.CheckCollision(nextRight) {
+		if !g.Map.checkCollision(nextRight) {
 			nextPos = nextRight
 		}
 	}
 
-	if g.Map.CheckOutOfBounds(nextPos) {
+	if g.Map.checkCollision(nextPos) {
 		return true, nextPos
 	}
 

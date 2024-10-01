@@ -17,14 +17,14 @@ func DrawDebugArea(dest rl.Rectangle, center rl.Vector2, color rl.Color) {
 }
 
 func DrawDebugSprite(sprite *Sprite) {
-	rl.DrawCircle(int32(sprite.Center().X), int32(sprite.Center().Y), 2, rl.Fade(rl.Red, 0.75))
+	rl.DrawCircle(int32(sprite.Center().X), int32(sprite.Center().Y), 2, rl.Magenta)
 	dest := rl.Rectangle{X: sprite.dest.X - sprite.origin.X, Y: sprite.dest.Y - sprite.origin.Y, Width: sprite.dest.Width, Height: sprite.dest.Height}
-	rl.DrawRectangleLinesEx(dest, 2, rl.Fade(rl.Red, 0.75))
-	rl.DrawLineEx(rl.NewVector2(dest.X, dest.Y), rl.NewVector2(dest.X+dest.Width, dest.Y+dest.Height), 2, rl.Fade(rl.Red, 0.75))
+	rl.DrawRectangleLinesEx(dest, 2, rl.Magenta)
+	rl.DrawLineEx(rl.NewVector2(dest.X, dest.Y), rl.NewVector2(dest.X+dest.Width, dest.Y+dest.Height), 2, rl.Magenta)
 }
 
 func DrawDebugLine(start rl.Vector2, end rl.Vector2) {
-	rl.DrawLineEx(start, end, 2, rl.Fade(rl.Blue, 0.75))
+	rl.DrawLineEx(start, end, 2, rl.Blue)
 }
 
 func UpdateDebug() {
