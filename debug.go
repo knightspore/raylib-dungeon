@@ -1,6 +1,11 @@
 package main
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	"fmt"
+	"time"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
 
 var DEBUG = true
 
@@ -27,7 +32,7 @@ func UpdateDebug() {
 		DEBUG = !DEBUG
 	}
 	if rl.IsKeyPressed(rl.KeyF2) {
-		rl.TakeScreenshot("screenshot.png")
+		rl.TakeScreenshot(fmt.Sprintf("screenshots/screen_%d.png", time.Now().Unix()))
 	}
 	if rl.IsKeyPressed(rl.KeyF3) {
 		rl.ToggleFullscreen()
