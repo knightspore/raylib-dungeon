@@ -13,16 +13,8 @@ type PointLight struct {
 	Radius float32
 }
 
-func NewPointLight(x, y, radius float32, color rl.Color) *PointLight {
+func NewLight(x, y, radius float32, color rl.Color) *PointLight {
 	return &PointLight{rl.NewVector2(x, y), color, radius}
-}
-
-type Lights struct {
-	Lights []*PointLight
-}
-
-func (l *Lights) Add(x, y, radius float32, color rl.Color) {
-	l.Lights = append(l.Lights, NewPointLight(x, y, radius, color))
 }
 
 func (l *Lights) Setup(g *Game) {
@@ -34,6 +26,26 @@ func (l *Lights) Setup(g *Game) {
 	l.Add(fullWidth-offset, fullWidth-offset, rad, rl.NewColor(0, 0, 255, 255))
 	l.Add(fullWidth-offset, offset, rad, rl.NewColor(255, 255, 255, 255))
 	l.Add(offset, fullWidth-offset, rad, rl.NewColor(255, 255, 0, 255))
+}
+
+func (l *Lights) Cleanup() {
+}
+
+func (l *Lights) Update(cursorCenter rl.Vector2) {
+}
+
+func (l *Lights) Draw(g *Game) {
+	for _, light := range l.Lights {
+		rl.DrawTexture(g.Textures.Light, int32(light.Pos.X-float32(g.Textures.Light.Width)/2), int32(light.Pos.Y-float32(g.Textures.Light.Height)/2), light.Color)
+	}
+}
+
+type Lights struct {
+	Lights []*PointLight
+}
+
+func (l *Lights) Add(x, y, radius float32, color rl.Color) {
+	l.Lights = append(l.Lights, NewLight(x, y, radius, color))
 }
 
 func (l *Lights) UpdateShader(g *Game) {
@@ -60,15 +72,4 @@ func (l *Lights) UpdateShader(g *Game) {
 		rl.SetShaderValue(g.Shaders.Lighting, posLoc, []float32{pos.X, pos.Y}, rl.ShaderUniformVec2)
 		rl.SetShaderValue(g.Shaders.Lighting, colorLoc, []float32{float32(light.Color.R), float32(light.Color.G), float32(light.Color.B)}, rl.ShaderUniformVec3)
 	}
-}
-
-func (l *Lights) Draw(g *Game) {
-	for _, light := range l.Lights {
-		rl.DrawTexture(g.Textures.Light, int32(light.Pos.X-float32(g.Textures.Light.Width)/2), int32(light.Pos.Y-float32(g.Textures.Light.Height)/2), light.Color)
-	}
-}
-
-func (l *Lights) Update(cursorCenter rl.Vector2) {
-	l.Lights[4].Pos.X = cursorCenter.X
-	l.Lights[4].Pos.Y = cursorCenter.Y
 }
