@@ -7,7 +7,7 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-var DEBUG = true
+var DEBUG = false
 
 func DrawDebugArea(dest rl.Rectangle, center rl.Vector2, color rl.Color) {
 	color = rl.Fade(color, 0.75)
@@ -17,10 +17,10 @@ func DrawDebugArea(dest rl.Rectangle, center rl.Vector2, color rl.Color) {
 }
 
 func DrawDebugSprite(sprite *Sprite) {
-	rl.DrawCircle(int32(sprite.Center().X), int32(sprite.Center().Y), 2, rl.Magenta)
+	rl.DrawCircle(int32(sprite.Center().X), int32(sprite.Center().Y), 2, rl.Red)
 	dest := rl.Rectangle{X: sprite.dest.X - sprite.origin.X, Y: sprite.dest.Y - sprite.origin.Y, Width: sprite.dest.Width, Height: sprite.dest.Height}
-	rl.DrawRectangleLinesEx(dest, 2, rl.Magenta)
-	rl.DrawLineEx(rl.NewVector2(dest.X, dest.Y), rl.NewVector2(dest.X+dest.Width, dest.Y+dest.Height), 2, rl.Magenta)
+	rl.DrawRectangleLinesEx(dest, 2, rl.Red)
+	rl.DrawLineEx(rl.NewVector2(dest.X, dest.Y), rl.NewVector2(dest.X+dest.Width, dest.Y+dest.Height), 2, rl.Red)
 }
 
 func DrawDebugLine(start rl.Vector2, end rl.Vector2) {
