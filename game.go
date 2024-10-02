@@ -85,9 +85,11 @@ func (g *Game) DrawColourPass() {
 
 	if DEBUG {
 		DrawDebugLine(g.Player.Center(), g.Cursor.Center())
-		// tile := g.Map.vec2Tile(g.Cursor.Center().X, g.Cursor.Center().Y)
-		// DrawDebugArea(g.Map.tiles[tile].sprite.dest, g.Map.tiles[tile].Center(), rl.Green)
-		// DrawDebugLine(g.Cursor.Center(), g.Map.tiles[tile].Center())
+		targetTile := g.Map.vectorToTile(g.Cursor.Center())
+		if targetTile != nil {
+			DrawDebugArea(targetTile.sprite.dest, targetTile.sprite.Center(), rl.Red)
+			DrawDebugLine(g.Cursor.Center(), targetTile.sprite.Center())
+		}
 	}
 
 	rl.EndMode2D()

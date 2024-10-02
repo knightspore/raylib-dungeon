@@ -9,22 +9,22 @@ import (
 var BG_COLOR = rl.Color{R: 40, G: 30, B: 44, A: 255}
 
 type Map struct {
-	sizeX     int32
-	sizeY     int32
-	tileSize  int32
-	tileSet   map[int]*Tile
-	tileOrder []int
-	sprite    *Sprite
+	sizeX    int32
+	sizeY    int32
+	tileSize int32
+	tileSet  map[int]*Tile
+	tiles    []int
+	sprite   *Sprite
 }
 
 func NewMap(tileOrder []int, baseSize int32) *Map {
 	dim := int32(math.Sqrt(float64(len(tileOrder))))
 	return &Map{
-		sizeX:     dim,
-		sizeY:     dim,
-		tileSize:  baseSize,
-		tileSet:   CreateTiles(float32(baseSize)),
-		tileOrder: tileOrder,
+		sizeX:    dim,
+		sizeY:    dim,
+		tileSize: baseSize,
+		tileSet:  CreateTiles(float32(baseSize)),
+		tiles:    tileOrder,
 	}
 }
 
@@ -45,10 +45,10 @@ func (m *Map) Setup() {
 
 	rl.BeginTextureMode(colorTex)
 	rl.ClearBackground(BG_COLOR)
-	for i := 0; i < len(m.tileOrder); i++ {
-		tile := m.tileSet[m.tileOrder[i]]
+	for i := 0; i < len(m.tiles); i++ {
+		tile := m.tileSet[m.tiles[i]]
 		falloff := i > int(m.sizeX) && tile._type == TILE_EMPTY &&
-			m.tileSet[m.tileOrder[i-int(m.sizeX)]]._type == TILE_FLOOR
+			m.tileSet[m.tiles[i-int(m.sizeX)]]._type == TILE_FLOOR
 		tile.Draw(m.getTileDest(i), tile.sprite.Color, falloff)
 	}
 	rl.EndTextureMode()
@@ -56,9 +56,9 @@ func (m *Map) Setup() {
 	rl.BeginTextureMode(normalTex)
 	rl.ClearBackground(rl.Blank)
 	for i := 0; i < int(m.sizeX*m.sizeY); i++ {
-		tile := m.tileSet[m.tileOrder[i]]
+		tile := m.tileSet[m.tiles[i]]
 		falloff := i > int(m.sizeX) && tile._type == TILE_EMPTY &&
-			m.tileSet[m.tileOrder[i-int(m.sizeX)]]._type == TILE_FLOOR
+			m.tileSet[m.tiles[i-int(m.sizeX)]]._type == TILE_FLOOR
 		tile.Draw(m.getTileDest(i), tile.sprite.Normal, falloff)
 	}
 	m.DrawNormal()
@@ -94,19 +94,29 @@ func (m *Map) getTileDest(i int) rl.Rectangle {
 	)
 }
 
-func (m *Map) vec2Tile(x, y float32) int {
+func (m *Map) vectorToTileIdx(x, y float32) int {
 	X := int32(x) / m.tileSize
 	Y := int32(y) / m.tileSize
 	return int(X + Y*m.sizeX)
 }
 
+func (m *Map) vectorToTile(v rl.Vector2) *Tile {
+	idx := m.vectorToTileIdx(v.X, v.Y)
+	if idx >= 0 && idx < len(m.tiles) {
+		tile := m.tileSet[m.tiles[idx]]
+		tile.sprite.dest = m.getTileDest(idx)
+		return tile
+	}
+	return nil
+}
+
 func (m *Map) getBoundingTiles(v rl.Vector2) []*Tile {
 	adjustedSize := float32(m.tileSize - 1) // TODO: Figure out a margin that works regardless of the speed:tileSize ratio
 
-	nw := m.tileSet[m.tileOrder[m.vec2Tile(v.X, v.Y)]]
-	ne := m.tileSet[m.tileOrder[m.vec2Tile(v.X+adjustedSize, v.Y)]]
-	sw := m.tileSet[m.tileOrder[m.vec2Tile(v.X, v.Y+adjustedSize)]]
-	se := m.tileSet[m.tileOrder[m.vec2Tile(v.X+adjustedSize, v.Y+adjustedSize)]]
+	nw := m.tileSet[m.tiles[m.vectorToTileIdx(v.X, v.Y)]]
+	ne := m.tileSet[m.tiles[m.vectorToTileIdx(v.X+adjustedSize, v.Y)]]
+	sw := m.tileSet[m.tiles[m.vectorToTileIdx(v.X, v.Y+adjustedSize)]]
+	se := m.tileSet[m.tiles[m.vectorToTileIdx(v.X+adjustedSize, v.Y+adjustedSize)]]
 
 	return []*Tile{nw, ne, sw, se}
 }
