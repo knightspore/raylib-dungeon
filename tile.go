@@ -1,6 +1,8 @@
 package main
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
 
 const (
 	TILE_FLOOR = iota
@@ -19,22 +21,20 @@ type Tile struct {
 	index  int
 }
 
-func NewTile(index, t int, baseSize, x, y float32) *Tile {
+func NewTile(index, t int, baseSize float32) *Tile {
 	return &Tile{
 		_type:  t,
 		size:   baseSize,
-		sprite: NewSprite(baseSize, x, y),
+		sprite: NewSprite(baseSize, 0, 0),
 		index:  index,
 	}
 }
 
-func CreateTiles(mapSlice []int, baseSize, sizeX, sizeY int32) map[int]*Tile {
+func CreateTiles(baseSize float32) map[int]*Tile {
 	tiles := make(map[int]*Tile)
-	for i, t := range mapSlice {
-		x := float32(int32(i%int(sizeX)) * baseSize)
-		y := float32(int32(i/int(sizeY)) * baseSize)
-		tiles[i] = NewTile(i, t, float32(baseSize), x, y)
-	}
+	// should be an iteration
+	tiles[TILE_FLOOR] = NewTile(0, TILE_FLOOR, baseSize)
+	tiles[TILE_EMPTY] = NewTile(1, TILE_EMPTY, baseSize)
 	return tiles
 }
 
@@ -62,7 +62,13 @@ func (t *Tile) Cleanup() {
 	t.sprite.Cleanup()
 }
 
-func (t *Tile) Draw(tex rl.Texture2D) {
+func (t *Tile) Draw(dest rl.Rectangle, tex rl.Texture2D, isFalloff bool) {
+	if isFalloff {
+		t.sprite.src.X = float32(t.sprite.Color.Height)
+	} else {
+		t.sprite.src.X = 0
+	}
+	t.sprite.dest = dest
 	t.sprite.Draw(tex)
 }
 

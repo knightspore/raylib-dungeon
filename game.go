@@ -25,7 +25,7 @@ func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 		BaseSize: baseSize,
 		Map:      Map,
 		Cam:      NewCamera(rl.NewVector2(float32(width/2), float32(height/2)), rl.NewVector2(float32(width/2), float32(height/2))),
-		Player:   NewPlayer(rl.NewVector2(float32(width/2), float32(height/2)), baseSize),
+		Player:   NewPlayer(rl.NewVector2(Map.center().X, Map.center().Y), int32(baseSize)),
 		Textures: &Textures{},
 		Shaders:  &Shaders{},
 		Lights:   &Lights{},
@@ -85,9 +85,9 @@ func (g *Game) DrawColourPass() {
 
 	if DEBUG {
 		DrawDebugLine(g.Player.Center(), g.Cursor.Center())
-		tile := g.Map.vec2Tile(g.Cursor.Center().X, g.Cursor.Center().Y)
-		DrawDebugArea(g.Map.tiles[tile].sprite.dest, g.Map.tiles[tile].Center(), rl.Green)
-		DrawDebugLine(g.Cursor.Center(), g.Map.tiles[tile].Center())
+		// tile := g.Map.vec2Tile(g.Cursor.Center().X, g.Cursor.Center().Y)
+		// DrawDebugArea(g.Map.tiles[tile].sprite.dest, g.Map.tiles[tile].Center(), rl.Green)
+		// DrawDebugLine(g.Cursor.Center(), g.Map.tiles[tile].Center())
 	}
 
 	rl.EndMode2D()
