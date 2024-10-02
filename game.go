@@ -127,7 +127,9 @@ func (g *Game) Draw() {
 	rl.DrawTextureRec(g.Textures.LightingPass.Texture, rl.NewRectangle(0, 0, float32(g.Width), -float32(g.Height)), rl.NewVector2(0, 0), rl.RayWhite)
 	rl.EndShaderMode()
 
-	rl.DrawFPS(10, 10)
+	if DEBUG {
+		rl.DrawFPS(10, 10)
+	}
 	rl.EndDrawing()
 }
 
