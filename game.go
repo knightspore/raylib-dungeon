@@ -8,13 +8,14 @@ type Game struct {
 	Width    int32
 	Height   int32
 	BaseSize int32
-	Map      *Map
-	Cam      *Camera
-	Player   *Player
 	Textures *Textures
 	Shaders  *Shaders
-	Lights   *Lights
+	Cam      *Camera
+	Map      *Map
+	Player   *Player
 	Cursor   *Cursor
+	Lights   *Lights
+	Emitter  *Emitter
 }
 
 func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
@@ -23,13 +24,14 @@ func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 		Width:    width,
 		Height:   height,
 		BaseSize: baseSize,
-		Map:      Map,
-		Cam:      NewCamera(rl.NewVector2(float32(width/2), float32(height/2)), rl.NewVector2(float32(width/2), float32(height/2))),
-		Player:   NewPlayer(rl.NewVector2(Map.center().X, Map.center().Y), int32(baseSize)),
 		Textures: &Textures{},
 		Shaders:  &Shaders{},
-		Lights:   &Lights{},
+		Cam:      NewCamera(rl.NewVector2(float32(width/2), float32(height/2)), rl.NewVector2(float32(width/2), float32(height/2))),
+		Map:      Map,
+		Player:   NewPlayer(rl.NewVector2(Map.center().X, Map.center().Y), int32(baseSize)),
 		Cursor:   NewCursor(float32(baseSize), float32(width/2), float32(height/2)),
+		Lights:   &Lights{},
+		Emitter:  NewEmitter(100, rl.NewRectangle(0, 0, float32(width), float32(height))),
 	}
 }
 
@@ -40,6 +42,7 @@ func (g *Game) Setup() {
 	g.Player.Setup()
 	g.Cursor.Setup()
 	g.Lights.Setup(g)
+	g.Emitter.Setup()
 }
 
 func (g *Game) Cleanup() {
@@ -49,6 +52,7 @@ func (g *Game) Cleanup() {
 	g.Player.Cleanup()
 	g.Cursor.Cleanup()
 	g.Lights.Cleanup()
+	g.Emitter.Cleanup()
 	rl.CloseWindow()
 }
 
@@ -57,6 +61,7 @@ func (g *Game) Update() {
 	g.Player.Update(g)
 	g.Cursor.Update()
 	g.Lights.Update(g.Cursor.Center())
+	g.Emitter.Update()
 	g.Cam.Update(g)
 }
 
@@ -81,6 +86,7 @@ func (g *Game) DrawColourPass() {
 	g.Map.Draw()
 	g.Player.Draw(g.Player.Sprite.Color)
 	g.Lights.Draw(g)
+	g.Emitter.Draw()
 	g.Cursor.Draw(g.Cursor.Sprite.Color)
 
 	if DEBUG {
