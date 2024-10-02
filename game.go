@@ -31,7 +31,7 @@ func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 		Player:   NewPlayer(rl.NewVector2(Map.center().X, Map.center().Y), int32(baseSize)),
 		Cursor:   NewCursor(float32(baseSize), float32(width/2), float32(height/2)),
 		Lights:   &Lights{},
-		Emitter:  NewEmitter(100, rl.NewRectangle(0, 0, float32(width), float32(height))),
+		Emitter:  NewEmitter(100, rl.NewRectangle(0, 0, float32(Map.tileSize*Map.sizeX), float32(Map.tileSize*Map.sizeY)), 10),
 	}
 }
 
