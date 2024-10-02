@@ -20,6 +20,13 @@ func NewParticle(size float32) *Particle {
 	}
 }
 
+func (p *Particle) draw() {
+	rl.DrawPixel(int32(p.pos.X), int32(p.pos.Y), rl.Fade(rl.White, 0.8))
+	if DEBUG {
+		rl.DrawCircleLines(int32(p.pos.X), int32(p.pos.Y), 20, rl.Red)
+	}
+}
+
 func (p *Particle) Setup(area rl.Rectangle) {
 	// position
 	p.pos.X = float32(rl.GetRandomValue(int32(area.X), int32(area.X+area.Width)))
@@ -28,7 +35,7 @@ func (p *Particle) Setup(area rl.Rectangle) {
 	p.velocity.X = 0.1 * float32(rl.GetRandomValue(-1, 1))
 	p.velocity.Y = 0.1 * float32(rl.GetRandomValue(-1, 1))
 	// life
-	p.life = float32(rl.GetRandomValue(5, 50))
+	p.life = float32(rl.GetRandomValue(20, 200))
 }
 
 func (p *Particle) Update() {
@@ -78,13 +85,23 @@ func (e *Emitter) Update() {
 }
 
 func (e *Emitter) Draw() {
-	vecs := []rl.Vector2{}
 	for _, particle := range e.particles {
-		rl.DrawRectanglePro(rl.NewRectangle(particle.pos.X, particle.pos.Y, particle.life/particle.size, particle.life/particle.size), rl.NewVector2(particle.size/2, particle.size/2), 0, rl.Fade(rl.Orange, particle.life/particle.size))
-		vecs = append(vecs, particle.pos)
+		particle.draw()
 	}
+}
 
-	if DEBUG {
-		rl.DrawLineStrip(vecs, rl.NewColor(255, 0, 0, 255))
+func (e *Emitter) DrawNormal() {
+	for _, particle := range e.particles {
+		rl.DrawRectangle(int32(particle.pos.X), int32(particle.pos.Y), int32(particle.size), int32(particle.size), rl.Fade(rl.Orange, particle.life/particle.size))
 	}
+}
+
+func (e *Emitter) SetSize(width, height float32) {
+	e.rect.Width = width
+	e.rect.Height = height
+}
+
+func (e *Emitter) SetPosition(x, y float32) {
+	e.rect.X = x
+	e.rect.Y = y
 }

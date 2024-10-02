@@ -31,7 +31,7 @@ func NewGame(tiles []int, width int32, height int32, baseSize int32) *Game {
 		Player:   NewPlayer(rl.NewVector2(Map.center().X, Map.center().Y), int32(baseSize)),
 		Cursor:   NewCursor(float32(baseSize), float32(width/2), float32(height/2)),
 		Lights:   &Lights{},
-		Emitter:  NewEmitter(100, rl.NewRectangle(0, 0, float32(Map.tileSize*Map.sizeX), float32(Map.tileSize*Map.sizeY)), 10),
+		Emitter:  NewEmitter(500, rl.NewRectangle(0, 0, float32(Map.tileSize*Map.sizeX), float32(Map.tileSize*Map.sizeY)), 10),
 	}
 }
 
@@ -93,7 +93,7 @@ func (g *Game) DrawColourPass() {
 		DrawDebugLine(g.Player.Center(), g.Cursor.Center())
 		targetTile := g.Map.vectorToTile(g.Cursor.Center())
 		if targetTile != nil {
-			DrawDebugArea(targetTile.sprite.dest, targetTile.sprite.Center(), rl.Red)
+			DrawDebugArea(targetTile.sprite.dest, targetTile.sprite.Center(), rl.Green)
 			DrawDebugLine(g.Cursor.Center(), targetTile.sprite.Center())
 		}
 	}
