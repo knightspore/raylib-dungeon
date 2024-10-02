@@ -31,12 +31,16 @@ func (c *Camera) updateZoom() {
 		if c.Cam.Zoom < 1.2 {
 			c.Cam.Zoom += c.ZoomSpeed
 			c.ZoomSpeed += 0.001
+		} else if DEBUG {
+			c.Cam.Zoom += c.ZoomSpeed
 		}
 	}
 	if rl.IsKeyDown(rl.KeyLeftBracket) {
 		if c.Cam.Zoom > 0.8 {
 			c.Cam.Zoom -= c.ZoomSpeed
 			c.ZoomSpeed += 0.001
+		} else if DEBUG {
+			c.Cam.Zoom -= c.ZoomSpeed
 		}
 	}
 }
