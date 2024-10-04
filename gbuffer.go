@@ -12,6 +12,7 @@ type GBuffer struct {
 	Albedo            rl.RenderTexture2D
 	Normal            rl.RenderTexture2D
 	Render            rl.RenderTexture2D
+	PostProcess       rl.RenderTexture2D
 	Debug             rl.RenderTexture2D
 	LightingShader    rl.Shader
 	PostProcessShader rl.Shader
@@ -21,6 +22,7 @@ func (g *GBuffer) Setup() {
 	g.Albedo = rl.LoadRenderTexture(WIDTH, HEIGHT)
 	g.Normal = rl.LoadRenderTexture(WIDTH, HEIGHT)
 	g.Render = rl.LoadRenderTexture(WIDTH, HEIGHT)
+	g.PostProcess = rl.LoadRenderTexture(WIDTH, HEIGHT)
 	g.Debug = rl.LoadRenderTexture(WIDTH, HEIGHT)
 	g.LightingShader = rl.LoadShader("", "shaders/deferred-lighting.fs")
 	g.PostProcessShader = rl.LoadShader("", "shaders/postprocess.fs")
@@ -30,12 +32,19 @@ func (g *GBuffer) Cleanup() {
 	rl.UnloadRenderTexture(g.Albedo)
 	rl.UnloadRenderTexture(g.Normal)
 	rl.UnloadRenderTexture(g.Render)
+	rl.UnloadRenderTexture(g.PostProcess)
 	rl.UnloadRenderTexture(g.Debug)
 	rl.UnloadShader(g.LightingShader)
 	rl.UnloadShader(g.PostProcessShader)
 }
 
-func (g *GBuffer) Update(l *Lights, cam *rl.Camera2D) {
+func (g *GBuffer) Update(l *Lights, cam *rl.Camera2D, drawColour func(), drawNormal func(), drawDebug func()) {
+	g.RenderColourPass(cam, drawColour)
+	g.RenderNormalPass(cam, drawNormal)
+	if DEBUG {
+		g.RenderDebugPass(cam, drawDebug)
+	}
+
 	normLoc := rl.GetShaderLocation(g.LightingShader, "u_normal")
 	rl.SetShaderValueTexture(g.LightingShader, normLoc, g.Normal.Texture)
 
@@ -59,6 +68,9 @@ func (g *GBuffer) Update(l *Lights, cam *rl.Camera2D) {
 		rl.SetShaderValue(g.LightingShader, posLoc, []float32{pos.X, pos.Y}, rl.ShaderUniformVec2)
 		rl.SetShaderValue(g.LightingShader, colorLoc, []float32{float32(light.colour.R), float32(light.colour.G), float32(light.colour.B)}, rl.ShaderUniformVec3)
 	}
+
+	g.RenderLightingPass()
+	g.RenderPostProcessPass()
 }
 
 func (g *GBuffer) RenderColourPass(cam *rl.Camera2D, draw func()) {
@@ -88,25 +100,31 @@ func (g *GBuffer) RenderDebugPass(cam *rl.Camera2D, draw func()) {
 	rl.EndTextureMode()
 }
 
-func (g *GBuffer) Draw() {
-	// Render the albedo texture
+func (g *GBuffer) RenderLightingPass() {
 	rl.BeginTextureMode(g.Render)
 	rl.BeginShaderMode(g.LightingShader)
 	rl.DrawTextureRec(g.Albedo.Texture, rl.NewRectangle(0, 0, float32(WIDTH), -float32(HEIGHT)), rl.NewVector2(0, 0), rl.RayWhite)
 	rl.EndShaderMode()
 	rl.EndTextureMode()
+}
 
-	// Draw to the screen
-	rl.BeginDrawing()
+func (g *GBuffer) RenderPostProcessPass() {
+	rl.BeginTextureMode(g.PostProcess)
 	rl.BeginShaderMode(g.PostProcessShader)
 	rl.DrawTextureRec(g.Render.Texture, rl.NewRectangle(0, 0, float32(WIDTH), -float32(HEIGHT)), rl.NewVector2(0, 0), rl.RayWhite)
 	rl.EndShaderMode()
-	rl.EndDrawing()
+	rl.EndTextureMode()
+}
 
+func (g *GBuffer) Draw() {
+	rl.ClearBackground(rl.Black)
+	rl.BeginDrawing()
+	rl.BeginShaderMode(g.PostProcessShader)
+	rl.DrawTextureRec(g.PostProcess.Texture, rl.NewRectangle(0, 0, float32(WIDTH), -float32(HEIGHT)), rl.NewVector2(0, 0), rl.RayWhite)
+	rl.EndShaderMode()
 	if DEBUG {
-		rl.BeginDrawing()
 		rl.DrawTextureRec(g.Debug.Texture, rl.NewRectangle(0, 0, float32(WIDTH), -float32(HEIGHT)), rl.NewVector2(0, 0), rl.RayWhite)
 		rl.DrawFPS(10, 10)
-		rl.EndDrawing()
 	}
+	rl.EndDrawing()
 }

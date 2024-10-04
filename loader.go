@@ -55,7 +55,7 @@ func LoadGameFromImage(path string) *Game {
 		Player:  NewPlayer(playerPos),
 		Cursor:  NewCursor(),
 		Lights:  lights,
-		Emitter: NewEmitter(1000, rl.NewRectangle(0, 0, float32(BASE_SIZE*int(image.Width)), float32(BASE_SIZE*int(image.Height))), 10),
+		Emitter: NewEmitter(500, rl.NewRectangle(0, 0, float32(BASE_SIZE*int(image.Width)), float32(BASE_SIZE*int(image.Height))), 10),
 	}
 
 	return game

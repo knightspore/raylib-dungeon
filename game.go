@@ -52,29 +52,22 @@ func (g *Game) Update() {
 	g.Cursor.Update()
 	g.Emitter.Update()
 	g.Cam.Update(g)
-	g.GBuffer.Update(g.Lights, g.Cam.Cam)
-}
-
-func (g *Game) Draw() {
-	// Clear the window
-	rl.ClearBackground(rl.Black)
-
-	g.GBuffer.RenderColourPass(g.Cam.Cam, func() {
-		g.Map.Draw()
-		g.Lights.Draw()
-		g.Player.Draw()
-		g.Emitter.Draw()
-		g.Cursor.Draw()
-	})
-
-	g.GBuffer.RenderNormalPass(g.Cam.Cam, func() {
-		g.Map.DrawNormal()
-		g.Player.DrawNormal()
-		g.Cursor.DrawNormal()
-	})
-
-	if DEBUG {
-		g.GBuffer.RenderDebugPass(g.Cam.Cam, func() {
+	g.GBuffer.Update(
+		g.Lights,
+		g.Cam.Cam,
+		func() {
+			g.Map.Draw()
+			g.Lights.Draw()
+			g.Player.Draw()
+			g.Emitter.Draw()
+			g.Cursor.Draw()
+		},
+		func() {
+			g.Map.DrawNormal()
+			g.Player.DrawNormal()
+			g.Cursor.DrawNormal()
+		},
+		func() {
 			DrawDebugSprite(g.Map.sprite)
 			DrawDebugParticles(&g.Emitter.particles)
 			DrawDebugLine(g.Player.Center(), g.Cursor.Center())
@@ -83,14 +76,16 @@ func (g *Game) Draw() {
 				DrawDebugArea(targetTile.sprite.dest, targetTile.sprite.Center(), rl.Green)
 				DrawDebugLine(g.Cursor.Center(), targetTile.sprite.Center())
 			}
-		})
-	}
+		},
+	)
+}
 
+func (g *Game) Draw() {
 	g.GBuffer.Draw()
 }
 
 func (g *Game) Run() {
-	rl.SetConfigFlags(rl.FlagVsyncHint | rl.FlagMsaa4xHint)
+	rl.SetConfigFlags(rl.FlagVsyncHint | rl.FlagMsaa4xHint | rl.FlagWindowUndecorated | rl.FlagWindowHighdpi)
 	rl.InitWindow(WIDTH, HEIGHT, "karoo")
 	rl.SetTargetFPS(60)
 	rl.DisableCursor()
