@@ -68,7 +68,7 @@ func NewEmitter(particleCount int, area rl.Rectangle, size float32) *Emitter {
 
 func (e *Emitter) Setup() {
 	for i := range e.particles {
-		rect := rl.Rectangle{X: e.rect.X - e.rect.Width, Y: e.rect.Y - e.rect.Height, Width: e.rect.Width * 2, Height: e.rect.Height * 2}
+		rect := rl.Rectangle{X: e.rect.X - e.rect.Width/2, Y: e.rect.Y - e.rect.Height/2, Width: e.rect.Width * 2, Height: e.rect.Height * 2}
 		e.particles[i].Setup(rect)
 	}
 }
