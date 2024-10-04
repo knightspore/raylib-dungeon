@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -43,8 +41,8 @@ func (g *Game) Setup() {
 	g.Map.Setup()
 	g.Player.Setup()
 	g.Cursor.Setup()
+	g.Lights.Setup()
 	g.Emitter.Setup()
-	fmt.Println("Game setup complete")
 }
 
 func (g *Game) Cleanup() {
@@ -53,6 +51,7 @@ func (g *Game) Cleanup() {
 	g.Map.Cleanup()
 	g.Player.Cleanup()
 	g.Cursor.Cleanup()
+	g.Lights.Cleanup()
 	g.Emitter.Cleanup()
 	rl.CloseWindow()
 }
@@ -61,7 +60,7 @@ func (g *Game) Update() {
 	UpdateDebug()
 	g.Player.Update(g)
 	g.Cursor.Update()
-	g.Lights.Update(g.Cursor.Center())
+	g.Lights.Update(g)
 	g.Emitter.Update()
 	g.Cam.Update(g)
 }
@@ -70,11 +69,9 @@ func (g *Game) DrawNormalPass() {
 	rl.BeginTextureMode(g.Textures.NormalPass)
 	rl.BeginMode2D(*g.Cam.Cam)
 	rl.ClearBackground(rl.Blank)
-
 	g.Map.DrawNormal()
 	g.Player.Draw(g.Player.Sprite.Normal)
 	g.Cursor.Draw(g.Cursor.Sprite.Normal)
-
 	rl.EndMode2D()
 	rl.EndTextureMode()
 }
@@ -83,13 +80,11 @@ func (g *Game) DrawColourPass() {
 	rl.BeginTextureMode(g.Textures.ColorPass)
 	rl.BeginMode2D(*g.Cam.Cam)
 	rl.ClearBackground(rl.Blank)
-
 	g.Map.Draw()
-	g.Player.Draw(g.Player.Sprite.Color)
 	g.Lights.Draw(g)
+	g.Player.Draw(g.Player.Sprite.Color)
 	g.Emitter.Draw()
 	g.Cursor.Draw(g.Cursor.Sprite.Color)
-
 	if DEBUG {
 		DrawDebugLine(g.Player.Center(), g.Cursor.Center())
 		targetTile := g.Map.vectorToTile(g.Cursor.Center())
@@ -98,13 +93,12 @@ func (g *Game) DrawColourPass() {
 			DrawDebugLine(g.Cursor.Center(), targetTile.sprite.Center())
 		}
 	}
-
 	rl.EndMode2D()
 	rl.EndTextureMode()
 }
 
 func (g *Game) DrawLightingPass() {
-	g.Lights.UpdateShader(g)
+	g.Lights.Update(g)
 	rl.BeginTextureMode(g.Textures.LightingPass)
 	rl.BeginShaderMode(g.Shaders.Lighting)
 	rl.DrawTextureRec(g.Textures.ColorPass.Texture, rl.NewRectangle(0, 0, float32(g.Width), -float32(g.Height)), rl.NewVector2(0, 0), rl.RayWhite)
@@ -115,19 +109,15 @@ func (g *Game) DrawLightingPass() {
 func (g *Game) Draw() {
 	// Clear the window
 	rl.ClearBackground(rl.Black)
-
 	// Draw to GBuffer
 	g.DrawColourPass()
 	g.DrawNormalPass()
 	g.DrawLightingPass()
-
 	// Draw from GBuffer with post processing shader
 	rl.BeginDrawing()
-
 	rl.BeginShaderMode(g.Shaders.PostProcess)
 	rl.DrawTextureRec(g.Textures.LightingPass.Texture, rl.NewRectangle(0, 0, float32(g.Width), -float32(g.Height)), rl.NewVector2(0, 0), rl.RayWhite)
 	rl.EndShaderMode()
-
 	if DEBUG {
 		rl.DrawFPS(10, 10)
 	}

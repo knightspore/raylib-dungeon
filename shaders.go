@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	SHADER_LIGHTING_FS    = "shaders/lighting.fs"
+	SHADER_LIGHTING_FS    = "shaders/deferred-lighting.fs"
 	SHADER_POSTPROCESS_FS = "shaders/postprocess.fs"
 )
 
