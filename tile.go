@@ -69,7 +69,7 @@ func (t *Tile) Draw(dest rl.Rectangle, tex rl.Texture2D, isFalloff bool) {
 		t.sprite.src.X = 0
 	}
 	t.sprite.dest = dest
-	t.sprite.Draw(tex)
+	t.sprite.Draw()
 }
 
 func (t *Tile) Center() rl.Vector2 {

@@ -36,13 +36,13 @@ type Map struct {
 	sprite   *Sprite
 }
 
-func NewMap(tileOrder []int, baseSize int32) *Map {
+func NewMap(tileOrder []int) *Map {
 	dim := int32(math.Sqrt(float64(len(tileOrder))))
 	return &Map{
 		sizeX:    dim,
 		sizeY:    dim,
-		tileSize: baseSize,
-		tileSet:  CreateTiles(float32(baseSize)),
+		tileSize: BASE_SIZE,
+		tileSet:  CreateTiles(float32(BASE_SIZE)),
 		tiles:    tileOrder,
 	}
 }
@@ -97,11 +97,11 @@ func (m *Map) Cleanup() {
 
 func (m *Map) Draw() {
 	rl.ClearBackground(BG_COLOR)
-	m.sprite.Draw(m.sprite.Color)
+	m.sprite.Draw()
 }
 
 func (m *Map) DrawNormal() {
-	m.sprite.Draw(m.sprite.Normal)
+	m.sprite.DrawNormal()
 }
 
 func (m *Map) getTileDest(i int) rl.Rectangle {

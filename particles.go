@@ -22,9 +22,6 @@ func NewParticle(size float32) *Particle {
 
 func (p *Particle) draw() {
 	rl.DrawPixel(int32(p.pos.X), int32(p.pos.Y), rl.Fade(rl.White, 0.8))
-	if DEBUG {
-		rl.DrawCircleLines(int32(p.pos.X), int32(p.pos.Y), 20, rl.Red)
-	}
 }
 
 func (p *Particle) drawNormal() {

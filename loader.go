@@ -49,17 +49,13 @@ func LoadGameFromImage(path string) *Game {
 	rl.UnloadImage(image)
 
 	game := &Game{
-		Width:    WIDTH,
-		Height:   HEIGHT,
-		BaseSize: BASE_SIZE,
-		Textures: &Textures{},
-		Shaders:  &Shaders{},
-		Cam:      NewCamera(rl.NewVector2(float32(WIDTH/2), float32(HEIGHT/2)), rl.NewVector2(float32(WIDTH/2), float32(HEIGHT/2))),
-		Map:      NewMap(tiles, BASE_SIZE),
-		Player:   NewPlayer(playerPos, BASE_SIZE),
-		Cursor:   NewCursor(float32(BASE_SIZE), float32(WIDTH/2), float32(HEIGHT/2)),
-		Lights:   lights,
-		Emitter:  NewEmitter(200, rl.NewRectangle(0, 0, float32(BASE_SIZE*int(image.Width)), float32(BASE_SIZE*int(image.Height))), 10),
+		GBuffer: &GBuffer{},
+		Cam:     NewCamera(),
+		Map:     NewMap(tiles),
+		Player:  NewPlayer(playerPos),
+		Cursor:  NewCursor(),
+		Lights:  lights,
+		Emitter: NewEmitter(1000, rl.NewRectangle(0, 0, float32(BASE_SIZE*int(image.Width)), float32(BASE_SIZE*int(image.Height))), 10),
 	}
 
 	return game

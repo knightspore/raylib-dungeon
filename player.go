@@ -9,10 +9,10 @@ type Player struct {
 	Sprite *Sprite
 }
 
-func NewPlayer(pos rl.Vector2, size int32) *Player {
+func NewPlayer(pos rl.Vector2) *Player {
 	return &Player{
-		Speed:  float32(size / 24),
-		Sprite: NewSprite(float32(size), pos.X-float32(size)/2, pos.Y-float32(size)/2),
+		Speed:  float32(BASE_SIZE / 24),
+		Sprite: NewSprite(float32(BASE_SIZE), pos.X-float32(BASE_SIZE)/2, pos.Y-float32(BASE_SIZE)/2),
 	}
 }
 
@@ -29,10 +29,15 @@ func (p *Player) Cleanup() {
 	p.Sprite.Cleanup()
 }
 
-func (p *Player) Draw(tex rl.Texture2D) {
+func (p *Player) Draw() {
 	rl.BeginShaderMode(p.Sprite.Shaders["player"])
-	p.Sprite.UpdateShaderValue("player", "u_time", []float32{float32(rl.GetTime())}, rl.ShaderUniformFloat)
-	p.Sprite.Draw(tex)
+	p.Sprite.Draw()
+	rl.EndShaderMode()
+}
+
+func (p *Player) DrawNormal() {
+	rl.BeginShaderMode(p.Sprite.Shaders["player"])
+	p.Sprite.DrawNormal()
 	rl.EndShaderMode()
 }
 
@@ -75,15 +80,12 @@ func (p *Player) HandleMovement(nextPos rl.Vector2, g *Game) (bool, rl.Vector2) 
 	return false, nextPos
 }
 
-func (p *Player) updatePosition(g *Game) {
+func (p *Player) Update(g *Game) {
+	p.Sprite.Animate()
 	if outOfBounds, nextPos := p.HandleMovement(p.Sprite.Pos(), g); !outOfBounds {
 		p.Sprite.SetDest(nextPos)
 	}
-}
-
-func (p *Player) Update(g *Game) {
-	p.Sprite.Animate()
-	p.updatePosition(g)
+	p.Sprite.UpdateShaderValue("player", "u_time", []float32{float32(rl.GetTime())}, rl.ShaderUniformFloat)
 }
 
 func (p *Player) Center() rl.Vector2 {

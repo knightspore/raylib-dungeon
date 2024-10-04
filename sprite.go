@@ -67,11 +67,12 @@ func (s *Sprite) Animate() {
 	s.src.X = float32(s.frame * int(s.Color.Width))
 }
 
-func (s *Sprite) Draw(tex rl.Texture2D) {
-	rl.DrawTexturePro(tex, s.src, s.dest, s.origin, s.rot, rl.White)
-	if DEBUG {
-		DrawDebugSprite(s)
-	}
+func (s *Sprite) Draw() {
+	rl.DrawTexturePro(s.Color, s.src, s.dest, s.origin, s.rot, rl.White)
+}
+
+func (s *Sprite) DrawNormal() {
+	rl.DrawTexturePro(s.Normal, s.src, s.dest, s.origin, s.rot, rl.White)
 }
 
 func (s *Sprite) Pos() rl.Vector2 {

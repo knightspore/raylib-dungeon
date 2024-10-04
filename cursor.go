@@ -6,9 +6,9 @@ type Cursor struct {
 	Sprite *Sprite
 }
 
-func NewCursor(baseSize, x, y float32) *Cursor {
+func NewCursor() *Cursor {
 	return &Cursor{
-		Sprite: NewSprite(baseSize, x, y),
+		Sprite: NewSprite(BASE_SIZE, WIDTH/2, HEIGHT/2),
 	}
 }
 
@@ -32,8 +32,12 @@ func (c *Cursor) Update() {
 	c.Sprite.SetRot(float32(rl.GetTime() * 40))
 }
 
-func (c *Cursor) Draw(tex rl.Texture2D) {
-	c.Sprite.Draw(tex)
+func (c *Cursor) Draw() {
+	c.Sprite.Draw()
+}
+
+func (c *Cursor) DrawNormal() {
+	c.Sprite.DrawNormal()
 }
 
 func (c *Cursor) Center() rl.Vector2 {

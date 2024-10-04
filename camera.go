@@ -8,11 +8,11 @@ type Camera struct {
 	FollowSpeed float32
 }
 
-func NewCamera(offset rl.Vector2, target rl.Vector2) *Camera {
+func NewCamera() *Camera {
 	return &Camera{
 		Cam: &rl.Camera2D{
-			Offset:   offset,
-			Target:   target,
+			Offset:   rl.Vector2{X: WIDTH / 2, Y: HEIGHT / 2},
+			Target:   rl.Vector2{X: WIDTH / 2, Y: HEIGHT / 2},
 			Rotation: 0,
 			Zoom:     1,
 		},
