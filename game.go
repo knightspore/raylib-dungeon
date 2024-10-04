@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -41,8 +43,8 @@ func (g *Game) Setup() {
 	g.Map.Setup()
 	g.Player.Setup()
 	g.Cursor.Setup()
-	g.Lights.Setup(g)
 	g.Emitter.Setup()
+	fmt.Println("Game setup complete")
 }
 
 func (g *Game) Cleanup() {
@@ -51,7 +53,6 @@ func (g *Game) Cleanup() {
 	g.Map.Cleanup()
 	g.Player.Cleanup()
 	g.Cursor.Cleanup()
-	g.Lights.Cleanup()
 	g.Emitter.Cleanup()
 	rl.CloseWindow()
 }

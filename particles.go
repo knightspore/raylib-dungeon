@@ -27,6 +27,10 @@ func (p *Particle) draw() {
 	}
 }
 
+func (p *Particle) drawNormal() {
+	rl.DrawPixel(int32(p.pos.X), int32(p.pos.Y), rl.Fade(rl.Orange, p.life/p.size))
+}
+
 func (p *Particle) Setup(area rl.Rectangle) {
 	// position
 	p.pos.X = float32(rl.GetRandomValue(int32(area.X), int32(area.X+area.Width)))
@@ -92,7 +96,7 @@ func (e *Emitter) Draw() {
 
 func (e *Emitter) DrawNormal() {
 	for _, particle := range e.particles {
-		rl.DrawRectangle(int32(particle.pos.X), int32(particle.pos.Y), int32(particle.size), int32(particle.size), rl.Fade(rl.Orange, particle.life/particle.size))
+		particle.drawNormal()
 	}
 }
 

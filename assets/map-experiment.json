@@ -1,0 +1,25 @@
+{ "frames": {
+   "map-experiment.ase": {
+    "frame": { "x": 0, "y": 0, "w": 32, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+    "sourceSize": { "w": 32, "h": 32 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "https://github.com/LibreSprite/LibreSprite/",
+  "version": "1.0",
+  "image": "/Users/c/Developer/karoo-engine/assets/map-experiment.png",
+  "format": "RGBA8888",
+  "size": { "w": 32, "h": 32 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Map", "opacity": 255, "blendMode": "normal" },
+   { "name": "Points of Interest", "opacity": 255, "blendMode": "normal" }
+  ]
+ }
+}

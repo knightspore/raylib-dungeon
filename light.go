@@ -17,26 +17,12 @@ func NewLight(x, y, radius float32, color rl.Color) *PointLight {
 	return &PointLight{rl.NewVector2(x, y), color, radius}
 }
 
-func (l *Lights) Setup(g *Game) {
-	offset := float32(g.Map.tileSize) * 2.5
-	fullWidth := float32(g.Map.sizeX * g.Map.tileSize)
-	rad := float32(50)
-
-	l.Add(offset, offset, rad, rl.NewColor(255, 0, 255, 255))
-	l.Add(fullWidth-offset, fullWidth-offset, rad, rl.NewColor(0, 0, 255, 255))
-	l.Add(fullWidth-offset, offset, rad, rl.NewColor(255, 255, 255, 255))
-	l.Add(offset, fullWidth-offset, rad, rl.NewColor(255, 255, 0, 255))
-}
-
-func (l *Lights) Cleanup() {
-}
-
 func (l *Lights) Update(cursorCenter rl.Vector2) {
 }
 
 func (l *Lights) Draw(g *Game) {
 	for _, light := range l.Lights {
-		rl.DrawTexture(g.Textures.Light, int32(light.Pos.X-float32(g.Textures.Light.Width)/2), int32(light.Pos.Y-float32(g.Textures.Light.Height)/2), light.Color)
+		rl.DrawTextureEx(g.Textures.Light, rl.Vector2{X: light.Pos.X - float32(BASE_SIZE)/2, Y: light.Pos.Y - float32(BASE_SIZE)/2}, 0, 2, light.Color)
 	}
 }
 
@@ -56,10 +42,10 @@ func (l *Lights) UpdateShader(g *Game) {
 	rl.SetShaderValue(g.Shaders.Lighting, resLoc, []float32{float32(g.Width), float32(g.Height)}, rl.ShaderUniformVec2)
 
 	zoomLoc := rl.GetShaderLocation(g.Shaders.Lighting, "u_zoom")
-	rl.SetShaderValue(g.Shaders.Lighting, zoomLoc, []float32{1.0 / g.Cam.Cam.Zoom}, rl.ShaderUniformFloat)
+	rl.SetShaderValue(g.Shaders.Lighting, zoomLoc, []float32{2.0 / g.Cam.Cam.Zoom}, rl.ShaderUniformFloat)
 
 	ambientLoc := rl.GetShaderLocation(g.Shaders.Lighting, "u_ambient")
-	rl.SetShaderValue(g.Shaders.Lighting, ambientLoc, []float32{0.15}, rl.ShaderUniformFloat)
+	rl.SetShaderValue(g.Shaders.Lighting, ambientLoc, []float32{0.1}, rl.ShaderUniformFloat)
 
 	for i, light := range l.Lights {
 		key := fmt.Sprintf("[%d]", i)
