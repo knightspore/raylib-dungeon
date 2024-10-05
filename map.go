@@ -101,6 +101,7 @@ func (m *Map) Draw() {
 }
 
 func (m *Map) DrawNormal() {
+	rl.ClearBackground(rl.Blank)
 	m.sprite.DrawNormal()
 }
 

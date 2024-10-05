@@ -11,7 +11,6 @@ type Game struct {
 	Player  *Player
 	Cursor  *Cursor
 	Lights  *Lights
-	Emitter *Emitter
 }
 
 func NewGame(tiles []int) *Game {
@@ -23,7 +22,6 @@ func NewGame(tiles []int) *Game {
 		Player:  NewPlayer(rl.NewVector2(Map.center().X, Map.center().Y)),
 		Cursor:  NewCursor(),
 		Lights:  &Lights{},
-		Emitter: NewEmitter(1000, rl.NewRectangle(0, 0, float32(Map.tileSize*Map.sizeX), float32(Map.tileSize*Map.sizeY)), 10),
 	}
 }
 
@@ -80,7 +78,6 @@ func LoadGame(path string) *Game {
 		Player:  NewPlayer(playerPos),
 		Cursor:  NewCursor(),
 		Lights:  lights,
-		Emitter: NewEmitter(500, rl.NewRectangle(0, 0, float32(BASE_SIZE*int(image.Width)), float32(BASE_SIZE*int(image.Height))), 10),
 	}
 
 	return game
@@ -92,7 +89,6 @@ func (g *Game) Setup() {
 	g.Player.Setup()
 	g.Cursor.Setup()
 	g.Lights.Setup()
-	g.Emitter.Setup()
 }
 
 func (g *Game) Cleanup() {
@@ -101,7 +97,6 @@ func (g *Game) Cleanup() {
 	g.Player.Cleanup()
 	g.Cursor.Cleanup()
 	g.Lights.Cleanup()
-	g.Emitter.Cleanup()
 	rl.CloseWindow()
 }
 
@@ -109,7 +104,7 @@ func (g *Game) Update() {
 	UpdateDebug()
 	g.Player.Update(g)
 	g.Cursor.Update()
-	g.Emitter.Update()
+	g.Lights.Update()
 	g.Cam.Update(g)
 	g.GBuffer.Update(
 		g.Lights,
@@ -118,7 +113,6 @@ func (g *Game) Update() {
 			g.Map.Draw()
 			g.Lights.Draw()
 			g.Player.Draw()
-			g.Emitter.Draw()
 			g.Cursor.Draw()
 		},
 		func() {
@@ -130,7 +124,11 @@ func (g *Game) Update() {
 			DrawDebugSprite(g.Map.sprite)
 			DrawDebugSprite(g.Player.Sprite)
 			DrawDebugSprite(g.Cursor.Sprite)
-			DrawDebugParticles(&g.Emitter.particles)
+			for _, light := range g.Lights.Lights {
+				DrawDebugSprite(light.sprite)
+				DrawDebugParticles(&light.emitter.particles)
+				DrawDebugArea(light.emitter.rect, rl.NewVector2(light.emitter.rect.X, light.emitter.rect.Y), rl.Red)
+			}
 			DrawDebugLine(g.Player.Center(), g.Cursor.Center())
 			targetTile := g.Map.vectorToTile(g.Cursor.Center())
 			if targetTile != nil {
