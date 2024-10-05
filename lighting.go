@@ -18,12 +18,12 @@ func NewLight(x, y, radius float32, color rl.Color) *PointLight {
 		color,
 		radius,
 		NewSprite(radius, x-radius/2, y-radius/2),
-		NewEmitter(50, rl.NewRectangle(x-radius, y-radius, radius*2, radius*2), 5),
+		NewEmitter(10, rl.NewRectangle(x-radius, y-radius, radius*2, radius*2), 5),
 	}
 }
 
 func (l *PointLight) Setup() {
-	l.sprite.Setup("textures/light.png", "", 1, map[string]rl.Shader{"light": rl.LoadShader("", "shaders/light.fs")})
+	l.sprite.Setup("textures/light.png", "", 1, map[string]rl.Shader{"light": rl.LoadShader("shaders/light.vs", "shaders/light.fs")})
 	l.emitter.Setup()
 }
 
@@ -34,6 +34,7 @@ func (l *PointLight) Cleanup() {
 
 func (l *PointLight) Update() {
 	l.emitter.Update()
+	l.sprite.UpdateShaderValue("light", "u_time", []float32{float32(rl.GetTime())}, rl.ShaderUniformFloat)
 }
 
 func (l *PointLight) Draw() {
