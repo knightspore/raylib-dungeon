@@ -21,7 +21,7 @@ func NewParticle(size float32) *Particle {
 }
 
 func (p *Particle) draw() {
-	rl.DrawPixel(int32(p.pos.X), int32(p.pos.Y), rl.Fade(rl.White, 0.8))
+	rl.DrawPixel(int32(p.pos.X), int32(p.pos.Y), rl.Fade(rl.Orange, p.life/p.size/2))
 }
 
 func (p *Particle) drawNormal() {
@@ -36,7 +36,7 @@ func (p *Particle) Setup(area rl.Rectangle) {
 	p.velocity.X = 0.1 * float32(rl.GetRandomValue(-1, 1))
 	p.velocity.Y = 0.1 * float32(rl.GetRandomValue(-1, 1))
 	// life
-	p.life = float32(rl.GetRandomValue(20, 200))
+	p.life = float32(rl.GetRandomValue(10, 30))
 }
 
 func (p *Particle) Update() {

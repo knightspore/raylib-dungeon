@@ -18,7 +18,7 @@ func NewLight(x, y, radius float32, color rl.Color) *PointLight {
 		color,
 		radius,
 		NewSprite(radius, x-radius/2, y-radius/2),
-		NewEmitter(50, rl.NewRectangle(x-radius/2, y-radius/2, radius, radius), 100),
+		NewEmitter(50, rl.NewRectangle(x-radius, y-radius, radius*2, radius*2), 5),
 	}
 }
 
