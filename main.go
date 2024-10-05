@@ -7,6 +7,6 @@ const (
 )
 
 func main() {
-	g := LoadGameFromImage("./assets/map-experiment.png")
+	g := LoadGame("./assets/map-experiment.png")
 	g.Run()
 }
