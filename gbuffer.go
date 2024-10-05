@@ -55,7 +55,7 @@ func (g *GBuffer) Update(l *Lights, cam *rl.Camera2D, drawColour func(), drawNor
 	rl.SetShaderValue(g.LightingShader, zoomLoc, []float32{2.0 / cam.Zoom}, rl.ShaderUniformFloat)
 
 	ambientLoc := rl.GetShaderLocation(g.LightingShader, "u_ambient")
-	rl.SetShaderValue(g.LightingShader, ambientLoc, []float32{0.1}, rl.ShaderUniformFloat)
+	rl.SetShaderValue(g.LightingShader, ambientLoc, []float32{0.15}, rl.ShaderUniformFloat)
 
 	for i, light := range l.Lights {
 		key := fmt.Sprintf("[%d]", i)
@@ -124,7 +124,8 @@ func (g *GBuffer) Draw() {
 	rl.EndShaderMode()
 	if DEBUG {
 		rl.DrawTextureRec(g.Debug.Texture, rl.NewRectangle(0, 0, float32(WIDTH), -float32(HEIGHT)), rl.NewVector2(0, 0), rl.RayWhite)
-		rl.DrawFPS(10, 10)
+		rl.DrawText("DEBUG", 10, 30, 20, rl.RayWhite)
 	}
+	rl.DrawFPS(10, 10)
 	rl.EndDrawing()
 }

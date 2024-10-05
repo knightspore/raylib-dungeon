@@ -69,6 +69,8 @@ func (g *Game) Update() {
 		},
 		func() {
 			DrawDebugSprite(g.Map.sprite)
+			DrawDebugSprite(g.Player.Sprite)
+			DrawDebugSprite(g.Cursor.Sprite)
 			DrawDebugParticles(&g.Emitter.particles)
 			DrawDebugLine(g.Player.Center(), g.Cursor.Center())
 			targetTile := g.Map.vectorToTile(g.Cursor.Center())
@@ -85,7 +87,7 @@ func (g *Game) Draw() {
 }
 
 func (g *Game) Run() {
-	rl.SetConfigFlags(rl.FlagVsyncHint | rl.FlagMsaa4xHint | rl.FlagWindowUndecorated | rl.FlagWindowHighdpi)
+	rl.SetConfigFlags(rl.FlagVsyncHint | rl.FlagMsaa4xHint | rl.FlagWindowUndecorated)
 	rl.InitWindow(WIDTH, HEIGHT, "karoo")
 	rl.SetTargetFPS(60)
 	rl.DisableCursor()

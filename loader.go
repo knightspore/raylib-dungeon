@@ -20,6 +20,8 @@ func LoadGameFromImage(path string) *Game {
 			// Read basic map data
 			if color.R == 255 && color.G == 0 && color.B == 0 { // Empty space
 				tiles = append(tiles, TILE_EMPTY)
+			} else if color.R == 255 && color.G == 255 && color.B == 0 { // Wall
+				tiles = append(tiles, TILE_EMPTY)
 			} else { // Defaulting to floor for now
 				tiles = append(tiles, TILE_FLOOR)
 			}

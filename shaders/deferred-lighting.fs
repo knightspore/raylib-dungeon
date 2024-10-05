@@ -1,6 +1,6 @@
 #version 410 core
 
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 16
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
