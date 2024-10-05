@@ -8,34 +8,39 @@ import (
 )
 
 type GBuffer struct {
-	Light             rl.Texture2D
-	Albedo            rl.RenderTexture2D
-	Normal            rl.RenderTexture2D
-	Render            rl.RenderTexture2D
-	PostProcess       rl.RenderTexture2D
-	Debug             rl.RenderTexture2D
-	LightingShader    rl.Shader
-	PostProcessShader rl.Shader
+	Albedo              rl.RenderTexture2D
+	Normal              rl.RenderTexture2D
+	Render              rl.RenderTexture2D
+	PostProBloom        rl.RenderTexture2D
+	PostProChroma       rl.RenderTexture2D
+	Debug               rl.RenderTexture2D
+	LightingShader      rl.Shader
+	PostProBloomShader  rl.Shader
+	PostProChromaShader rl.Shader
 }
 
 func (g *GBuffer) Setup() {
 	g.Albedo = rl.LoadRenderTexture(WIDTH, HEIGHT)
 	g.Normal = rl.LoadRenderTexture(WIDTH, HEIGHT)
 	g.Render = rl.LoadRenderTexture(WIDTH, HEIGHT)
-	g.PostProcess = rl.LoadRenderTexture(WIDTH, HEIGHT)
+	g.PostProBloom = rl.LoadRenderTexture(WIDTH, HEIGHT)
+	g.PostProChroma = rl.LoadRenderTexture(WIDTH, HEIGHT)
 	g.Debug = rl.LoadRenderTexture(WIDTH, HEIGHT)
 	g.LightingShader = rl.LoadShader("", "shaders/deferred-lighting.fs")
-	g.PostProcessShader = rl.LoadShader("", "shaders/postprocess.fs")
+	g.PostProBloomShader = rl.LoadShader("", "shaders/postpro-bloom.fs")
+	g.PostProChromaShader = rl.LoadShader("", "shaders/postpro-chromabberation.fs")
 }
 
 func (g *GBuffer) Cleanup() {
 	rl.UnloadRenderTexture(g.Albedo)
 	rl.UnloadRenderTexture(g.Normal)
 	rl.UnloadRenderTexture(g.Render)
-	rl.UnloadRenderTexture(g.PostProcess)
+	rl.UnloadRenderTexture(g.PostProBloom)
+	rl.UnloadRenderTexture(g.PostProChroma)
 	rl.UnloadRenderTexture(g.Debug)
 	rl.UnloadShader(g.LightingShader)
-	rl.UnloadShader(g.PostProcessShader)
+	rl.UnloadShader(g.PostProBloomShader)
+	rl.UnloadShader(g.PostProChromaShader)
 }
 
 func (g *GBuffer) Update(l *Lights, cam *rl.Camera2D, drawColour func(), drawNormal func(), drawDebug func()) {
@@ -109,9 +114,15 @@ func (g *GBuffer) RenderLightingPass() {
 }
 
 func (g *GBuffer) RenderPostProcessPass() {
-	rl.BeginTextureMode(g.PostProcess)
-	rl.BeginShaderMode(g.PostProcessShader)
+	rl.BeginTextureMode(g.PostProBloom)
+	rl.BeginShaderMode(g.PostProBloomShader)
 	rl.DrawTextureRec(g.Render.Texture, rl.NewRectangle(0, 0, float32(WIDTH), -float32(HEIGHT)), rl.NewVector2(0, 0), rl.RayWhite)
+	rl.EndShaderMode()
+	rl.EndTextureMode()
+
+	rl.BeginTextureMode(g.PostProChroma)
+	rl.BeginShaderMode(g.PostProChromaShader)
+	rl.DrawTextureRec(g.PostProBloom.Texture, rl.NewRectangle(0, 0, float32(WIDTH), -float32(HEIGHT)), rl.NewVector2(0, 0), rl.RayWhite)
 	rl.EndShaderMode()
 	rl.EndTextureMode()
 }
@@ -119,8 +130,8 @@ func (g *GBuffer) RenderPostProcessPass() {
 func (g *GBuffer) Draw() {
 	rl.ClearBackground(rl.Black)
 	rl.BeginDrawing()
-	rl.BeginShaderMode(g.PostProcessShader)
-	rl.DrawTextureRec(g.PostProcess.Texture, rl.NewRectangle(0, 0, float32(WIDTH), -float32(HEIGHT)), rl.NewVector2(0, 0), rl.RayWhite)
+	rl.DrawTextureRec(g.PostProChroma.Texture, rl.NewRectangle(0, 0, float32(WIDTH), -float32(HEIGHT)), rl.NewVector2(0, 0), rl.RayWhite)
+
 	rl.EndShaderMode()
 	if DEBUG {
 		rl.DrawTextureRec(g.Debug.Texture, rl.NewRectangle(0, 0, float32(WIDTH), -float32(HEIGHT)), rl.NewVector2(0, 0), rl.RayWhite)

@@ -1,8 +1,8 @@
 package main
 
 const (
-	WIDTH     = 800
-	HEIGHT    = 800
+	WIDTH     = 1920
+	HEIGHT    = 1080
 	BASE_SIZE = 64
 )
 
