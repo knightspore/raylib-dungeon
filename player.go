@@ -41,8 +41,9 @@ func (p *Player) DrawNormal() {
 	rl.EndShaderMode()
 }
 
-func (p *Player) DrawDebug() {
+func (p *Player) DrawDebug(cursorCenter rl.Vector2) {
 	DrawDebugSprite(p.Sprite)
+	DrawDebugLine(p.Sprite.Center(), cursorCenter)
 }
 
 func (p *Player) HandleMovement(nextPos rl.Vector2, g *Game) (bool, rl.Vector2) {

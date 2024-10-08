@@ -105,8 +105,13 @@ func (m *Map) DrawNormal() {
 	m.sprite.DrawNormal()
 }
 
-func (m *Map) DrawDebug() {
+func (m *Map) DrawDebug(cursorCenter rl.Vector2) {
 	m.sprite.DrawDebug()
+	targetTile := m.vectorToTile(cursorCenter)
+	if targetTile != nil {
+		DrawDebugSprite(targetTile.sprite)
+		DrawDebugLine(cursorCenter, targetTile.sprite.Center())
+	}
 }
 
 func (m *Map) getTileDest(i int) rl.Rectangle {

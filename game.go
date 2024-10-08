@@ -122,18 +122,10 @@ func (g *Game) Update() {
 			g.Cursor.DrawNormal()
 		},
 		func() {
-			g.Map.DrawDebug()
-			g.Player.DrawDebug()
+			g.Map.DrawDebug(g.Cursor.Center())
+			g.Player.DrawDebug(g.Cursor.Center())
 			g.Cursor.DrawDebug()
 			g.Lights.DrawDebug()
-
-			// Draw debug lines for player and cursor
-			DrawDebugLine(g.Player.Center(), g.Cursor.Center())
-			targetTile := g.Map.vectorToTile(g.Cursor.Center())
-			if targetTile != nil {
-				DrawDebugArea(targetTile.sprite.dest, targetTile.sprite.Center(), rl.Green)
-				DrawDebugLine(g.Cursor.Center(), targetTile.sprite.Center())
-			}
 		},
 	)
 }
