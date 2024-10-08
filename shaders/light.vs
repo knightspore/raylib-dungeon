@@ -18,7 +18,7 @@ uniform float u_time;
 void main() {
     gl_Position = matProjection * matView * matModel * vec4(vertexPosition, 1.0);
 
-    float pulse = 0.5 * abs(sin(u_time/2));
+    float pulse = 0.2 * abs(sin(u_time/2));
 
     fragTexCoord = vertexTexCoord;
     fragColor = vertexColor - pulse;
