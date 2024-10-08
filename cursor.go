@@ -40,6 +40,10 @@ func (c *Cursor) DrawNormal() {
 	c.Sprite.DrawNormal()
 }
 
+func (c *Cursor) DrawDebug() {
+	DrawDebugSprite(c.Sprite)
+}
+
 func (c *Cursor) Center() rl.Vector2 {
 	return c.Sprite.Pos()
 }

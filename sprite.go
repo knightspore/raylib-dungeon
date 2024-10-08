@@ -75,6 +75,10 @@ func (s *Sprite) DrawNormal() {
 	rl.DrawTexturePro(s.Normal, s.src, s.dest, s.origin, s.rot, rl.White)
 }
 
+func (s *Sprite) DrawDebug() {
+	DrawDebugSprite(s)
+}
+
 func (s *Sprite) Pos() rl.Vector2 {
 	return rl.NewVector2(s.dest.X, s.dest.Y)
 }

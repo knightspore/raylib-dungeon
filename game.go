@@ -117,18 +117,17 @@ func (g *Game) Update() {
 		},
 		func() {
 			g.Map.DrawNormal()
+			g.Lights.DrawNormal()
 			g.Player.DrawNormal()
 			g.Cursor.DrawNormal()
 		},
 		func() {
-			DrawDebugSprite(g.Map.sprite)
-			DrawDebugSprite(g.Player.Sprite)
-			DrawDebugSprite(g.Cursor.Sprite)
-			for _, light := range g.Lights.Lights {
-				DrawDebugSprite(light.sprite)
-				DrawDebugParticles(&light.emitter.particles)
-				DrawDebugArea(light.emitter.rect, rl.NewVector2(light.emitter.rect.X, light.emitter.rect.Y), rl.Red)
-			}
+			g.Map.DrawDebug()
+			g.Player.DrawDebug()
+			g.Cursor.DrawDebug()
+			g.Lights.DrawDebug()
+
+			// Draw debug lines for player and cursor
 			DrawDebugLine(g.Player.Center(), g.Cursor.Center())
 			targetTile := g.Map.vectorToTile(g.Cursor.Center())
 			if targetTile != nil {

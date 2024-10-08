@@ -41,6 +41,10 @@ func (p *Player) DrawNormal() {
 	rl.EndShaderMode()
 }
 
+func (p *Player) DrawDebug() {
+	DrawDebugSprite(p.Sprite)
+}
+
 func (p *Player) HandleMovement(nextPos rl.Vector2, g *Game) (bool, rl.Vector2) {
 	// This can be optimized the most
 	// ie. split into sprite and player

@@ -105,6 +105,10 @@ func (m *Map) DrawNormal() {
 	m.sprite.DrawNormal()
 }
 
+func (m *Map) DrawDebug() {
+	m.sprite.DrawDebug()
+}
+
 func (m *Map) getTileDest(i int) rl.Rectangle {
 	return rl.NewRectangle(
 		float32(i%int(m.sizeX)*int(m.tileSize)),

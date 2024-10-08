@@ -51,6 +51,11 @@ func (l *PointLight) DrawNormal() {
 	rl.EndShaderMode()
 }
 
+func (l *PointLight) DrawDebug() {
+	l.sprite.DrawDebug()
+	l.emitter.DrawDebug()
+}
+
 type Lights struct {
 	Lights []*PointLight
 }
@@ -79,6 +84,20 @@ func (l *Lights) Draw() {
 		light.Draw()
 	}
 	rl.EndBlendMode()
+}
+
+func (l *Lights) DrawNormal() {
+	rl.BeginBlendMode(rl.BlendAdditive)
+	for _, light := range l.Lights {
+		light.DrawNormal()
+	}
+	rl.EndBlendMode()
+}
+
+func (l *Lights) DrawDebug() {
+	for _, light := range l.Lights {
+		light.DrawDebug()
+	}
 }
 
 func (l *Lights) Add(x, y, radius float32, color rl.Color) {

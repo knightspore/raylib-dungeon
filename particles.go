@@ -97,6 +97,11 @@ func (e *Emitter) DrawNormal() {
 	}
 }
 
+func (e *Emitter) DrawDebug() {
+	DrawDebugArea(e.rect, rl.Vector2{X: e.rect.Width / 2, Y: e.rect.Height / 2}, rl.Orange)
+	DrawDebugParticles(&e.particles)
+}
+
 func (e *Emitter) SetSize(width, height float32) {
 	e.rect.Width = width
 	e.rect.Height = height
